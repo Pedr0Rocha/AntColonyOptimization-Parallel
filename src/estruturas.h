@@ -14,6 +14,10 @@ typedef struct {
 	int custo;
 } formiga;
 
+typedef struct {
+	int x, y;
+} par;
+
 void inicializaMatrizResposta(int matrizResposta[4][4]);
 //void inicializaFormigas(int qta_formigas);
 
