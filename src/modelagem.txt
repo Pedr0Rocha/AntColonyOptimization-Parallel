@@ -1,0 +1,59 @@
+Algoritmo Ant System
+Ciclos
+Formigas
+Matriz de feromônios
+Equação de evaporar fer.
+Equação de depositar fer.
+
+Equação de Depositar fer.
+Feromonio do caminho da formiga^alfa    *    Valor da Heuristica^beta
+-----------------------------------------------------------------------------------------------
+Somatório dos feromonios do caminho da formiga^alfa    *    Somatório do Valor da Heuristica^beta
+
+Alfa
+Peso definido para feromônio aplicado.
+
+Beta
+Peso definido para valor da heurística
+
+Formiga
+Solução
+Caminho
+Matriz Inicial
+
+Solução
+Matriz com board
+Peso da heurística
+
+Heurística Distância Manhattan
+Distancia da peça (x, y) para o lugar certo.
+
+Condição de Parada
+Máximo de ciclos atingido ou matriz atual = matriz final do puzzle
+
+Evapora matriz de fer.
+Feromonio do caminho = feromonio * ( 1 – p) + deltaT
+
+p
+Taxa de evaporação natural do feromônio 
+
+DeltaT
+peso / caminho percorrido 
+Quanto menor o número de nós percorridos para achar solução melhor
+
+Loop do Algoritmo
+contador de ciclos = 0
+enquanto (contador de ciclos != máximo de ciclos)
+	inicializar as formigas
+	posicionar formigas com matriz inicial do n-puzzle
+	para cada formiga
+		enquanto (condição de parada não atingida)
+			para cada aresta que pode ser gerada (q gera caminho ainda não percorrido)
+				probabilidade do caminho da formiga = Equação de depositar fer.
+				estado = melhor probabilidade no caminho da formiga
+				solução da formiga = matriz
+			fim para
+		fim enquanto
+		evapora matriz de feromônios
+	fim para
+fim enquanto
