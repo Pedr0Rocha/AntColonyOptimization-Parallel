@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "estruturas.h"
+#include "heuristica.h"
 
 void inicializaMatrizResposta(int matrizResposta[4][4]){
 	matrizResposta[0][0] = 1;
@@ -20,16 +21,20 @@ void inicializaMatrizResposta(int matrizResposta[4][4]){
 	matrizResposta[3][3] = 7;
 }
 
-// formiga[qta_formigas] inicializaFormigas(int qta_formigas){
-// 	int i;
-// 	formiga formigas[qta_formigas];
-// 	for (i = 0; i < qta_formigas; i++){
-// 	}
-// 	return formigas;
-// }
 
-void expandeNodo(node nodo){
-	
+void cloneArray(int original[4][4], int clone[4][4]){
+	int i, j;
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			clone[i][j] = original[i][j];
+}
+
+int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
+	int i, j;
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			if (matrizComparar[i][j] != matrizAlvo[i][j]) return 0;
+	return 1;
 }
 
 void imprimeMatriz(int matriz[4][4]){
@@ -42,5 +47,21 @@ void imprimeMatriz(int matriz[4][4]){
 				printf("%d  ", matriz[i][j]);
 		}
 		printf("\n");
+	}
+}
+
+void imprimeInfoFormiga(formiga f, int imprimeCaminho){
+	printf("FORMIGA: %d\n", f.id);
+	printf("Valor da Heuristica: %d\n", f.caminho[sizeof(f.caminho)].valorHeuristica);
+	printf("Matriz Final:\n");
+	imprimeMatriz(f.caminho[sizeof(f.caminho)].matriz);
+	printf("\n\n");
+	if (imprimeCaminho == 1){
+		printf("Caminho:");
+		int i;
+		for (i = 0; i < sizeof(f.caminho); i++){
+			imprimeMatriz(f.caminho[i].matriz);
+			printf("\n");
+		}
 	}
 }

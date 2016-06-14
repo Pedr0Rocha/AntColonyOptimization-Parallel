@@ -4,8 +4,9 @@ Formigas
 Matriz de feromônios
 Equação de evaporar fer.
 Equação de depositar fer.
+Equação de probabilidade de caminho
 
-Equação de Depositar fer.
+Equação de Probabilidade de caminho
 Feromonio do caminho da formiga^alfa    *    Valor da Heuristica^beta
 -----------------------------------------------------------------------------------------------
 Somatório dos feromonios do caminho da formiga^alfa    *    Somatório do Valor da Heuristica^beta
@@ -45,15 +46,14 @@ Loop do Algoritmo
 contador de ciclos = 0
 enquanto (contador de ciclos != máximo de ciclos)
 	inicializar as formigas
-	posicionar formigas com matriz inicial do n-puzzle
 	para cada formiga
 		enquanto (condição de parada não atingida)
-			para cada aresta que pode ser gerada (q gera caminho ainda não percorrido)
-				probabilidade do caminho da formiga = Equação de depositar fer.
-				estado = melhor probabilidade no caminho da formiga
-				solução da formiga = matriz
-			fim para
+			gera e escolhe caminho obedecendo a probabilidade e sem repetir
+			calcula a probabilidade dos caminhos
+			escolhe o de maior probabilidade
+			vai por este caminho
 		fim enquanto
-		evapora matriz de feromônios
+		volta no caminho depositando feromonios
 	fim para
+	evapora matriz de feromônios
 fim enquanto

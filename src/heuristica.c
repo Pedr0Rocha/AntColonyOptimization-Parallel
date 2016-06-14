@@ -3,41 +3,75 @@
 #include "heuristica.h"
 #include "estruturas.h"
 
+par mapaPosicoes[16];
+
 int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4]){
+	fazMapa();
 	int distanciaX = 0;
 	int distanciaY = 0;
 	int i, j; 
-	par posicaoCorreta[16];
-
-	posicaoCorreta[0]  = new par(2, 1);
-	posicaoCorreta[1]  = new par(0, 0);
-	posicaoCorreta[2]  = new par(0, 1);
-	posicaoCorreta[3]  = new par(0, 2);
-	posicaoCorreta[4]  = new par(0, 3);
-	posicaoCorreta[5]  = new par(1, 3);
-	posicaoCorreta[6]  = new par(2, 3);
-	posicaoCorreta[7]  = new par(3, 3);
-	posicaoCorreta[7]  = new par(3, 2);
-	posicaoCorreta[8]  = new par(3, 1);
-	posicaoCorreta[9]  = new par(3, 0);
-	posicaoCorreta[10] = new par(2, 0);
-	posicaoCorreta[11] = new par(1, 0);
-	posicaoCorreta[12] = new par(1, 1);
-	posicaoCorreta[13] = new par(1, 2);
-	posicaoCorreta[14] = new par(2, 2);
-	 
 	int erradas = 0;
 
 	for (i = 0; i < 4; i++){
 	    for (j = 0; j < 4; j++){
 	        if (matrizComparar[i][j] != matrizResposta[i][j]){
 	        	erradas++;
-	            distanciaX += abs(posicaoCorreta[matrizComparar[i][j]].x - i);
-	            distanciaY += abs(posicaoCorreta[matrizComparar[i][j]].y - j);
+	            distanciaX += abs(mapaPosicoes[matrizComparar[i][j]].x - i);
+	            distanciaY += abs(mapaPosicoes[matrizComparar[i][j]].y - j);
 	        }
 	    }
 	}
-	printf("Distancia X = %d, Distancia Y = %d", distanciaX, distanciaY);
-	printf("Pecas fora do lugar: %d", erradas);
+	//printf("Distancia X = %d, Distancia Y = %d\n", distanciaX, distanciaY);
+	//printf("Pecas fora do lugar: %d\n", erradas);
 	return (distanciaX + distanciaY);
+}
+
+void fazMapa(){
+	mapaPosicoes[0].x = 2; 
+	mapaPosicoes[0].y = 1;
+
+	mapaPosicoes[1].x = 0;  
+	mapaPosicoes[1].y = 0;
+	
+	mapaPosicoes[2].x = 0;  
+	mapaPosicoes[2].y = 1;
+	
+	mapaPosicoes[3].x = 0;  
+	mapaPosicoes[3].y = 2;
+	
+	mapaPosicoes[4].x = 0;  
+	mapaPosicoes[4].y = 3;
+	
+	mapaPosicoes[5].x = 1;  
+	mapaPosicoes[5].y = 3;
+	
+	mapaPosicoes[6].x = 2;  
+	mapaPosicoes[6].y = 3;
+	
+	mapaPosicoes[7].x = 3;  
+	mapaPosicoes[7].y = 3;
+	
+	mapaPosicoes[8].x = 3;  
+	mapaPosicoes[8].y = 2;
+	
+	mapaPosicoes[9].x = 3;  
+	mapaPosicoes[9].y = 1;
+	
+	mapaPosicoes[10].x = 3;  
+	mapaPosicoes[10].y = 0;
+	
+	mapaPosicoes[11].x = 2; 
+	mapaPosicoes[11].y = 0;
+	
+	mapaPosicoes[12].x = 1; 
+	mapaPosicoes[12].y = 0;
+	
+	mapaPosicoes[13].x = 1; 
+	mapaPosicoes[13].y = 1;
+	
+	mapaPosicoes[14].x = 1; 
+	mapaPosicoes[14].y = 2;
+	
+	mapaPosicoes[15].x = 2; 
+	mapaPosicoes[15].y = 2;
 }

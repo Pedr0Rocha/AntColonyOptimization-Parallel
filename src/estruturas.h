@@ -4,14 +4,16 @@
 #include <stdio.h>
 
 typedef struct {
-	int matrizAtual[4][4];
-	int valor_heuristica;
+	int matriz[4][4];
+	int valorHeuristica;
 	int movimentos;
+	float feromonio;
 } node;
 
 typedef struct {
-	node solucao;
-	int custo;
+	int id;
+	node caminho[100];
+	float probCaminho;
 } formiga;
 
 typedef struct {
@@ -19,10 +21,12 @@ typedef struct {
 } par;
 
 void inicializaMatrizResposta(int matrizResposta[4][4]);
-//void inicializaFormigas(int qta_formigas);
+
+int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 
 void imprimeMatriz(int matriz[4][4]);
+void imprimeInfoFormiga(formiga f, int imprimeCaminho);
 
-void expandeNodo(node node);
+void cloneArray(int matriz[4][4], int clone[4][4]);
 
 #endif
