@@ -4,9 +4,8 @@
 #include <stdio.h>
 
 
-//	HEURISTICA DE DISTANCIA MANHATTAN
-//	Para cada peça fora do lugar, somar a distancia retangular para colocar no lugar correto.
-int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4]);
+//	heuristica distancia manhattan ou peças fora do lugar, 0 para peças fora do lugar, 1 para manhattan
+int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4], int heuristica);
 
 void fazMapa();
 

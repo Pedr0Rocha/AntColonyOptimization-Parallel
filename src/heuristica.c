@@ -5,7 +5,7 @@
 
 par mapaPosicoes[16];
 
-int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4]){
+int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4], int flag){
 	fazMapa();
 	int distanciaX = 0;
 	int distanciaY = 0;
@@ -21,9 +21,13 @@ int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4]){
 	        }
 	    }
 	}
-	//printf("Distancia X = %d, Distancia Y = %d\n", distanciaX, distanciaY);
-	//printf("Pecas fora do lugar: %d\n", erradas);
-	return (distanciaX + distanciaY);
+	int resposta;
+	if (flag == 1) 
+		resposta = (distanciaX + distanciaY);
+	else 
+		resposta = erradas;
+
+	return resposta;
 }
 
 void fazMapa(){

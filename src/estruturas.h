@@ -2,17 +2,19 @@
 #define ESTRUTURAS_H
 
 #include <stdio.h>
+typedef struct node node;
 
-typedef struct {
+struct node{
 	int matriz[4][4];
 	int valorHeuristica;
 	int movimentos;
-	float feromonio;
-} node;
+	struct node *prox;
+};
 
 typedef struct {
 	int id;
-	node caminho[100];
+	node *caminho;
+	float feromonio;
 	float probCaminho;
 } formiga;
 
@@ -25,8 +27,12 @@ void inicializaMatrizResposta(int matrizResposta[4][4]);
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 
 void imprimeMatriz(int matriz[4][4]);
-void imprimeInfoFormiga(formiga f, int imprimeCaminho);
+void imprimeInfoFormiga(formiga f);
 
 void cloneArray(int matriz[4][4], int clone[4][4]);
+
+void insereNoCaminho(node *caminho, node nodeInserir, int movimentos);
+
+par achaPosicaoZero(int matriz[4][4]);
 
 #endif
