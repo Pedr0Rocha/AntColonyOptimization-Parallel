@@ -2,20 +2,22 @@
 #define ESTRUTURAS_H
 
 #include <stdio.h>
+
 typedef struct node node;
 
 struct node{
 	int matriz[4][4];
 	int valorHeuristica;
 	int movimentos;
-	struct node *prox;
+	float feromonio;
+	int qtaFilhos;
+	node *filhos;
+	node *pai;
 };
 
 typedef struct {
 	int id;
 	node *caminho;
-	float feromonio;
-	float probCaminho;
 } formiga;
 
 typedef struct {
@@ -23,6 +25,8 @@ typedef struct {
 } par;
 
 void inicializaMatrizResposta(int matrizResposta[4][4]);
+
+int calculaQuantidadeFilhos(node *node);
 
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 

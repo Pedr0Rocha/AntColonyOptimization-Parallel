@@ -41,23 +41,22 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 }
 
 // insere node no final do caminho
-void insereNoCaminho(node *caminho, node nodeInserir, int movimentos){
-	node *atual = caminho;
-	while (atual->prox != NULL)
-		atual = atual->prox;
+// void insereNoCaminho(node *caminho, node nodeInserir, int movimentos){
+// 	node *atual = caminho;
+// 	while (atual->filhos != NULL)
+// 		atual = atual->filhos;
 
-	atual->prox = malloc(sizeof(node));
-	cloneArray(nodeInserir.matriz, atual->prox->matriz);
-	atual->prox->valorHeuristica = nodeInserir.valorHeuristica;
-	atual->prox->movimentos = movimentos;
-	atual->prox->prox = NULL;
-}
+// 	cloneArray(nodeInserir.matriz, atual->filhos[0]->matriz);
+// 	atual->filhos[0]->valorHeuristica = nodeInserir.valorHeuristica;
+// 	atual->filhos[0]->movimentos = movimentos;
+// 	atual->filhos[0]->filhos[0] = NULL;
+// }
 
 // retorna o numero de movimentos do ultimo node do caminho
 int numeroMovimentosSolucao(node *caminho){
 	node *atual = caminho;
-	while (atual != NULL)
-		atual = atual->prox;
+	//while (atual != NULL)
+	//	atual = atual->filhos[0];
 
 	return atual->movimentos;
 }
@@ -73,6 +72,26 @@ par achaPosicaoZero(int matriz[4][4]){
 				posZero.y = j;
 			}
 	return posZero;
+}
+
+// acha a posicao do zero na matriz dada
+int calculaQuantidadeFilhos(node *node){
+	par posZero;
+	int i, j;
+	int filhos = 0;
+	for (i = 0; i < 4; ++i)
+		for (j = 0; j < 4; ++j)
+			if (node->matriz[i][j] == 0){
+				posZero.x = i;
+				posZero.y = j;
+			}
+
+	if (posZero.y - 1 >= 0) filhos++;
+	if (posZero.y + 1 <  4) filhos++;
+	if (posZero.x - 1 >= 0) filhos++;
+	if (posZero.x + 1 <  4) filhos++;
+
+	return filhos;
 }
 
 void imprimeMatriz(int matriz[4][4]){
@@ -99,6 +118,6 @@ void imprimeInfoFormiga(formiga f){
 		printf("Valor da Heuristica: %d\n", atual->valorHeuristica);
 		printf("Movimentos: %d\n", atual->movimentos);
 		printf("--------------------------------\n\n");
-		atual = atual->prox;
+		//atual = atual->filhos[0];
 	}
 }
