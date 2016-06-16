@@ -4,20 +4,25 @@
 #include <stdio.h>
 
 typedef struct node node;
+typedef struct listaLigada listaLigada;
 
-struct node{
+struct node {
 	int matriz[4][4];
 	int valorHeuristica;
-	int movimentos;
 	float feromonio;
 	int qtaFilhos;
-	node *filhos;
-	node *pai;
+	listaLigada *filhos;
+};
+
+struct listaLigada {
+	node *nodeAtual;
+	listaLigada *prev;
 };
 
 typedef struct {
 	int id;
-	node *caminho;
+	listaLigada *caminho;
+	int movimentos;
 } formiga;
 
 typedef struct {
@@ -35,7 +40,7 @@ void imprimeInfoFormiga(formiga f);
 
 void cloneArray(int matriz[4][4], int clone[4][4]);
 
-void insereNoCaminho(node *caminho, node nodeInserir, int movimentos);
+void insereListaLigada(node *node, listaLigada **lista);
 
 par achaPosicaoZero(int matriz[4][4]);
 

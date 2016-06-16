@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "leitor.h"
 #include "estruturas.h"
 #include "heuristica.h"
@@ -10,6 +11,8 @@
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
+
+node raizArvore;
 
 // heuristica usada, 1 - manhattan distance, 0 - out of order
 int heuristicaUsada = 1;
@@ -49,94 +52,108 @@ int heuristicaUsada = 1;
 void atualizaFeromonioCaminho(){}
 void atualizaFeromonioGlobal(){}
 
-// TODO - checar probabilidades e inserir apenas um node no caminho
-void geraNode(int matriz[4][4], node *caminho){
+void inicializaFilho(node *filho){
+	filho->valorHeuristica = calculaHeuristica(matrizResposta, filho->matriz, heuristicaUsada);
+	filho->feromonio = 1;
+}
+
+void geraNode(node *node) {
 	par zeroPos;
-	zeroPos = achaPosicaoZero(matriz);	
-	//int movimentos = caminho->movimentos + 1;
+	zeroPos = achaPosicaoZero(node->matriz);	
+	int i;
 
 	// vizinho na coluna da esquerda
-	if (zeroPos.y - 1 >= 0){
-		node nodeEsquerda;
-
-		cloneArray(matriz, nodeEsquerda.matriz);
-		// troca posição do zero na matriz nova
-		nodeEsquerda.matriz[zeroPos.x][zeroPos.y] = nodeEsquerda.matriz[zeroPos.x][zeroPos.y - 1];
-		nodeEsquerda.matriz[zeroPos.x][zeroPos.y - 1] = 0;
-		nodeEsquerda.valorHeuristica = calculaHeuristica(matrizResposta, nodeEsquerda.matriz, heuristicaUsada);
-		//insereNoCaminho(caminho, nodeEsquerda, movimentos);
+	if (zeroPos.y - 1 >= 0) {
+		node *filhoEsquerda;
+		filhoEsquerda = malloc(sizeof(node));
+		cloneArray(node->matriz, filhoEsquerda->matriz);
+		filhoEsquerda->matriz[zeroPos.x][zeroPos.y] = filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1];
+		filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1] = 0;
+		inicializaFilho(filhoEsquerda);
+		insereListaLigada(filhoEsquerda, &node->filhos);
 	}
 	// vizinho na coluna da direita
-	if (zeroPos.y + 1 < 4){
-		node nodeDireita;
-
-		cloneArray(matriz, nodeDireita.matriz);
-		// troca posição do zero na matriz nova
-		nodeDireita.matriz[zeroPos.x][zeroPos.y] = nodeDireita.matriz[zeroPos.x][zeroPos.y + 1];
-		nodeDireita.matriz[zeroPos.x][zeroPos.y + 1] = 0;
-		nodeDireita.valorHeuristica = calculaHeuristica(matrizResposta, nodeDireita.matriz, heuristicaUsada);
-		//insereNoCaminho(caminho, nodeDireita, movimentos);
+	if (zeroPos.y + 1 < 4) {
+		node *filhoDireita;
+		filhoDireita = malloc(sizeof(node));
+		cloneArray(node->matriz, filhoDireita.matriz);
+		filhoDireita.matriz[zeroPos.x][zeroPos.y] = filhoDireita.matriz[zeroPos.x][zeroPos.y + 1];
+		filhoDireita.matriz[zeroPos.x][zeroPos.y + 1] = 0;
+		inicializaFilho(filhoDireita);
+		insereListaLigada(filhoDireita, &node->filhos);
 	}
 	// vizinho na linha de cima
-	if (zeroPos.x - 1 >= 0){
-		node nodeCima;
-
-		cloneArray(matriz, nodeCima.matriz);
-		// troca posição do zero na matriz nova
-		nodeCima.matriz[zeroPos.x][zeroPos.y] = nodeCima.matriz[zeroPos.x - 1][zeroPos.y];
-		nodeCima.matriz[zeroPos.x - 1][zeroPos.y] = 0;
-		nodeCima.valorHeuristica = calculaHeuristica(matrizResposta, nodeCima.matriz, heuristicaUsada);
-		//insereNoCaminho(caminho, nodeCima, movimentos);
+	if (zeroPos.x - 1 >= 0) {
+		node *filhoCima;
+		filhoCima = malloc(sizeof(node));
+		cloneArray(node->matriz, filhoCima.matriz);
+		filhoCima.matriz[zeroPos.x][zeroPos.y] = filhoCima.matriz[zeroPos.x - 1][zeroPos.y];
+		filhoCima.matriz[zeroPos.x - 1][zeroPos.y] = 0;
+		inicializaFilho(filhoCima);
+		insereListaLigada(filhoCima, &node->filhos);
 	}
 	// vizinho na linha de baixo
-	if (zeroPos.x + 1 < 4){
-		node nodeBaixo;
-
-		cloneArray(matriz, nodeBaixo.matriz);
-		// troca posição do zero na matriz nova
-		nodeBaixo.matriz[zeroPos.x][zeroPos.y] = nodeBaixo.matriz[zeroPos.x + 1][zeroPos.y];
-		nodeBaixo.matriz[zeroPos.x + 1][zeroPos.y] = 0;
-		nodeBaixo.valorHeuristica = calculaHeuristica(matrizResposta, nodeBaixo.matriz, heuristicaUsada);
-		//insereNoCaminho(caminho, nodeBaixo, movimentos);
+	if (zeroPos.x + 1 < 4) {
+		node *filhoBaixo;
+		filhoBaixo = malloc(sizeof(node));
+		cloneArray(node->matriz, filhoBaixo.matriz);
+		filhoBaixo.matriz[zeroPos.x][zeroPos.y] = filhoBaixo.matriz[zeroPos.x + 1][zeroPos.y];
+		filhoBaixo.matriz[zeroPos.x + 1][zeroPos.y] = 0;
+		inicializaFilho(filhoBaixo);
+		insereListaLigada(filhoBaixo, &node->filhos);
 	}
 }
 
-void inicializaFormigas(formiga formigas[QTA_FORMIGAS], node *raiz){
-	int i;
-	for (i = 0; i < QTA_FORMIGAS; i++){
-		formigas[i].id = i;
-		formigas[i].caminho = raiz;
-	}
+void inicializaFormigas(formiga *formiga, int index, node *raiz){
+	formigas[i].id = index;
+	formigas[i].caminho-> = raiz;
 }
 
 void inicializaArvore(node *raiz){
 	cloneArray(matrizInicial, raiz->matriz);
-	raiz->valorHeuristica = calculaHeuristica(matrizResposta, raiz->matriz, heuristicaUsada);
-	raiz->movimentos = 0;
-	raiz->feromonio = -1;
-	raiz->qtaFilhos = calculaQuantidadeFilhos(raiz);
-	raiz->filhos = malloc(sizeof(node) * raiz->qtaFilhos);
-	raiz->pai = NULL;
+	raiz->valorHeuristica = 1;
+	raiz->feromonio = 1;
+}
+
+void escolheMelhorFilho(){
+ // esolhe probabilisticamente o melhor dos filhos 
+}
+
+void adicionaNoCaminho(){
+ // adiciona o melhor filho gerado no caminho
+}
+
+void geraSolucao(formiga *formiga) {
+	if (formiga->nodeAtual->filhos == NULL){
+		geraNode(formiga->nodeAtual);
+	}
+	node *filho = escolheMelhorFilho();
+	adicionaNoCaminho(formiga, filho);
 }
 
 int antsystem(){
 	formiga formigas[QTA_FORMIGAS];
 	int i, contadorCiclos = 0;
-	node raizArvore;
 	inicializaArvore(&raizArvore);
+	int melhorMovimentos = INT_MAX;
+
 	while (contadorCiclos != MAX_CICLOS){
-		inicializaFormigas(formigas, &raizArvore);
-		for (i = 0; i < QTA_FORMIGAS; i++){
-			//geraNode(formigas[i].caminho->matriz, formigas[i].caminho);
-			//imprimeInfoFormiga(formigas[i]);	
-			//if (formigas[i]->custo > melhorCusto)
-			//	melhorCusto = formigas[i]->custo;
-			//atualizaFeromonioCaminho();
+		for (i = 0; i < QTA_FORMIGAS; ++i){
+			inicializaFormigas(&formiga[i], i, &raizArvore);
+			geraSolucao(&formigas[i]);
+		}
+		for (i = 0; i < QTA_FORMIGAS; ++i){
+			if (matrizIgual(formigas[i].caminho->node->matriz, matrizResposta)){
+				if (formigas[i].movimentos < melhorMovimentos){
+					melhorMovimentos = formigas[i].movimentos;
+				}			
+			}
+			atualizaFeromonioCaminho();
 		}
 		contadorCiclos++;
-		//atualizaFeromonioGlobal();
+		atualizaFeromonioGlobal();
 	}
-	return 0;
+	return melhorMovimentos;
 }
 
 int main(){

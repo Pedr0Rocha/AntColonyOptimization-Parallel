@@ -40,17 +40,19 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 	return 1;
 }
 
-// insere node no final do caminho
-// void insereNoCaminho(node *caminho, node nodeInserir, int movimentos){
-// 	node *atual = caminho;
-// 	while (atual->filhos != NULL)
-// 		atual = atual->filhos;
-
-// 	cloneArray(nodeInserir.matriz, atual->filhos[0]->matriz);
-// 	atual->filhos[0]->valorHeuristica = nodeInserir.valorHeuristica;
-// 	atual->filhos[0]->movimentos = movimentos;
-// 	atual->filhos[0]->filhos[0] = NULL;
-// }
+void insereListaLigada(node *node, listaLigada **lista) {
+	if (*lista == NULL){
+		*lista = malloc(sizeof(listaLigada)); 
+		(**lista).nodeAtual = node;
+		(**lista).prev = NULL;
+	} else {
+		listaLigada *nova;
+		nova = malloc(sizeof(listaLigada));
+		nova->nodeAtual = node;
+		nova->prev = *lista;
+		*lista = novo;
+	}
+}
 
 // retorna o numero de movimentos do ultimo node do caminho
 int numeroMovimentosSolucao(node *caminho){
