@@ -50,17 +50,8 @@ void insereListaLigada(node *node, listaLigada **lista) {
 		nova = malloc(sizeof(listaLigada));
 		nova->nodeAtual = node;
 		nova->prev = *lista;
-		*lista = novo;
+		*lista = nova;
 	}
-}
-
-// retorna o numero de movimentos do ultimo node do caminho
-int numeroMovimentosSolucao(node *caminho){
-	node *atual = caminho;
-	//while (atual != NULL)
-	//	atual = atual->filhos[0];
-
-	return atual->movimentos;
 }
 
 // acha a posicao do zero na matriz dada
@@ -106,20 +97,5 @@ void imprimeMatriz(int matriz[4][4]){
 				printf("%d  ", matriz[i][j]);
 		}
 		printf("\n");
-	}
-}
-
-void imprimeInfoFormiga(formiga f){
-	printf("FORMIGA: %d\n", f.id);
-	printf("\n");
-	printf("Caminho:\n");
-	node *atual = f.caminho;
-	while (atual != NULL){
-		imprimeMatriz(atual->matriz);
-		printf("\n");
-		printf("Valor da Heuristica: %d\n", atual->valorHeuristica);
-		printf("Movimentos: %d\n", atual->movimentos);
-		printf("--------------------------------\n\n");
-		//atual = atual->filhos[0];
 	}
 }

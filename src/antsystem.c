@@ -4,7 +4,6 @@
 #include "leitor.h"
 #include "estruturas.h"
 #include "heuristica.h"
-#include "antsystem.h"
 
 #define MAX_CICLOS 1
 #define QTA_FORMIGAS 2
@@ -47,85 +46,81 @@ int heuristicaUsada = 1;
 
 */
 
-
-
 void atualizaFeromonioCaminho(){}
 void atualizaFeromonioGlobal(){}
 
 void inicializaFilho(node *filho){
 	filho->valorHeuristica = calculaHeuristica(matrizResposta, filho->matriz, heuristicaUsada);
 	filho->feromonio = 1;
+	filho->filhos = NULL;
 }
 
-void geraNode(node *node) {
+void geraNode(node *nodeOrigem) {
 	par zeroPos;
-	zeroPos = achaPosicaoZero(node->matriz);	
-	int i;
+	zeroPos = achaPosicaoZero(nodeOrigem->matriz);	
 
 	// vizinho na coluna da esquerda
 	if (zeroPos.y - 1 >= 0) {
-		node *filhoEsquerda;
-		filhoEsquerda = malloc(sizeof(node));
-		cloneArray(node->matriz, filhoEsquerda->matriz);
+		node *filhoEsquerda = malloc(sizeof(nodeOrigem));
+		cloneArray(nodeOrigem->matriz, filhoEsquerda->matriz);
 		filhoEsquerda->matriz[zeroPos.x][zeroPos.y] = filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1];
 		filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1] = 0;
 		inicializaFilho(filhoEsquerda);
-		insereListaLigada(filhoEsquerda, &node->filhos);
+		insereListaLigada(filhoEsquerda, &nodeOrigem->filhos);
 	}
 	// vizinho na coluna da direita
 	if (zeroPos.y + 1 < 4) {
-		node *filhoDireita;
-		filhoDireita = malloc(sizeof(node));
-		cloneArray(node->matriz, filhoDireita.matriz);
-		filhoDireita.matriz[zeroPos.x][zeroPos.y] = filhoDireita.matriz[zeroPos.x][zeroPos.y + 1];
-		filhoDireita.matriz[zeroPos.x][zeroPos.y + 1] = 0;
+		node *filhoDireita = malloc(sizeof(nodeOrigem));
+		cloneArray(nodeOrigem->matriz, filhoDireita->matriz);
+		filhoDireita->matriz[zeroPos.x][zeroPos.y] = filhoDireita->matriz[zeroPos.x][zeroPos.y + 1];
+		filhoDireita->matriz[zeroPos.x][zeroPos.y + 1] = 0;
 		inicializaFilho(filhoDireita);
-		insereListaLigada(filhoDireita, &node->filhos);
+		insereListaLigada(filhoDireita, &nodeOrigem->filhos);
 	}
 	// vizinho na linha de cima
 	if (zeroPos.x - 1 >= 0) {
-		node *filhoCima;
-		filhoCima = malloc(sizeof(node));
-		cloneArray(node->matriz, filhoCima.matriz);
-		filhoCima.matriz[zeroPos.x][zeroPos.y] = filhoCima.matriz[zeroPos.x - 1][zeroPos.y];
-		filhoCima.matriz[zeroPos.x - 1][zeroPos.y] = 0;
+		node *filhoCima = malloc(sizeof(nodeOrigem));
+		cloneArray(nodeOrigem->matriz, filhoCima->matriz);
+		filhoCima->matriz[zeroPos.x][zeroPos.y] = filhoCima->matriz[zeroPos.x - 1][zeroPos.y];
+		filhoCima->matriz[zeroPos.x - 1][zeroPos.y] = 0;
 		inicializaFilho(filhoCima);
-		insereListaLigada(filhoCima, &node->filhos);
+		insereListaLigada(filhoCima, &nodeOrigem->filhos);
 	}
 	// vizinho na linha de baixo
 	if (zeroPos.x + 1 < 4) {
-		node *filhoBaixo;
-		filhoBaixo = malloc(sizeof(node));
-		cloneArray(node->matriz, filhoBaixo.matriz);
-		filhoBaixo.matriz[zeroPos.x][zeroPos.y] = filhoBaixo.matriz[zeroPos.x + 1][zeroPos.y];
-		filhoBaixo.matriz[zeroPos.x + 1][zeroPos.y] = 0;
+		node *filhoBaixo = malloc(sizeof(nodeOrigem));
+		cloneArray(nodeOrigem->matriz, filhoBaixo->matriz);
+		filhoBaixo->matriz[zeroPos.x][zeroPos.y] = filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y];
+		filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y] = 0;
 		inicializaFilho(filhoBaixo);
-		insereListaLigada(filhoBaixo, &node->filhos);
+		insereListaLigada(filhoBaixo, &nodeOrigem->filhos);
 	}
 }
 
 void inicializaFormigas(formiga *formiga, int index, node *raiz){
-	formigas[i].id = index;
-	formigas[i].caminho-> = raiz;
+	formiga->id = index;
+	insereListaLigada(raiz, &formiga->caminho);
 }
 
 void inicializaArvore(node *raiz){
 	cloneArray(matrizInicial, raiz->matriz);
 	raiz->valorHeuristica = 1;
 	raiz->feromonio = 1;
+	raiz->filhos = NULL;
 }
 
-void escolheMelhorFilho(){
+node* escolheMelhorFilho(){
  // esolhe probabilisticamente o melhor dos filhos 
+	return NULL;
 }
 
-void adicionaNoCaminho(){
+void adicionaNoCaminho(formiga *formiga, node *filho){
  // adiciona o melhor filho gerado no caminho
 }
 
 void geraSolucao(formiga *formiga) {
-	if (formiga->nodeAtual->filhos == NULL){
-		geraNode(formiga->nodeAtual);
+	if (formiga->caminho->nodeAtual->filhos == NULL){
+		geraNode(formiga->caminho->nodeAtual);
 	}
 	node *filho = escolheMelhorFilho();
 	adicionaNoCaminho(formiga, filho);
@@ -139,11 +134,11 @@ int antsystem(){
 
 	while (contadorCiclos != MAX_CICLOS){
 		for (i = 0; i < QTA_FORMIGAS; ++i){
-			inicializaFormigas(&formiga[i], i, &raizArvore);
+			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i]);
 		}
 		for (i = 0; i < QTA_FORMIGAS; ++i){
-			if (matrizIgual(formigas[i].caminho->node->matriz, matrizResposta)){
+			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
 				if (formigas[i].movimentos < melhorMovimentos){
 					melhorMovimentos = formigas[i].movimentos;
 				}			

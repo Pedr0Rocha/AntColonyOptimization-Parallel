@@ -36,7 +36,6 @@ int calculaQuantidadeFilhos(node *node);
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 
 void imprimeMatriz(int matriz[4][4]);
-void imprimeInfoFormiga(formiga f);
 
 void cloneArray(int matriz[4][4], int clone[4][4]);
 
