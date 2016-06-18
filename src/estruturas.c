@@ -5,6 +5,7 @@
 
 // matriz com a configuracao correta do puzzle
 void inicializaMatrizResposta(int matrizResposta[4][4]){
+	/*
 	matrizResposta[0][0] = 1;
 	matrizResposta[0][1] = 2;
 	matrizResposta[0][2] = 3;
@@ -21,6 +22,23 @@ void inicializaMatrizResposta(int matrizResposta[4][4]){
 	matrizResposta[3][1] = 9;
 	matrizResposta[3][2] = 8;
 	matrizResposta[3][3] = 7;
+	*/
+	matrizResposta[0][0] = 1;
+	matrizResposta[0][1] = 2;
+	matrizResposta[0][2] = 3;
+	matrizResposta[0][3] = 4;
+	matrizResposta[1][0] = 5;
+	matrizResposta[1][1] = 6;
+	matrizResposta[1][2] = 7;
+	matrizResposta[1][3] = 8;
+	matrizResposta[2][0] = 9;
+	matrizResposta[2][1] = 10;
+	matrizResposta[2][2] = 11;
+	matrizResposta[2][3] = 12;
+	matrizResposta[3][0] = 13;
+	matrizResposta[3][1] = 14;
+	matrizResposta[3][2] = 15;
+	matrizResposta[3][3] = 0;
 }
 
 
@@ -86,11 +104,6 @@ par achaPosicaoZero(int matriz[4][4]){
 int estaNoCaminho(int matriz[4][4], formiga *formiga){
 	listaLigada *atual = formiga->caminho;
 	while (atual != NULL){
-		printf("comparando: \n\n");
-		imprimeMatriz(matriz);
-		printf("\ncom: \n\n");
-		imprimeMatriz(atual->nodeAtual->matriz);
-		printf("\n\n\n");
 		if (matrizIgual(matriz, atual->nodeAtual->matriz) == 1) return 1;
 		atual = atual->prev;
 	}
@@ -121,7 +134,9 @@ void imprimeMatriz(int matriz[4][4]){
 	int i, j;
 	for (i = 0; i < 4; i++){
 		for (j = 0; j < 4; j++){
-			if (matriz[i][j] > 9)
+			if (matriz[i][j] == 0)
+				printf("\033[31;1m%d  \033[0m", matriz[i][j]);
+			else if (matriz[i][j] > 9)
 				printf("%d ", matriz[i][j]);
 			else
 				printf("%d  ", matriz[i][j]);

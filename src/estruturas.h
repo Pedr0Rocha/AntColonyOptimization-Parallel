@@ -14,16 +14,16 @@ struct node {
 	listaLigada *filhos;
 };
 
-struct listaLigada {
-	node *nodeAtual;
-	listaLigada *prev;
-};
-
 typedef struct {
 	int id;
 	listaLigada *caminho;
 	int movimentos;
 } formiga;
+
+struct listaLigada {
+	node *nodeAtual;
+	listaLigada *prev;
+};
 
 typedef struct {
 	int x, y;

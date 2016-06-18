@@ -31,7 +31,6 @@ node* selecaoRoleta(listaLigada *filhos, int qtaFilhos){
 	double random = randomDouble();
 	for (i = 0; i < qtaFilhos; i++){
 		if (random <= pesosFilhos[i] / somatoriaFeromonio){
-			printf("Filho Escolhido: %d\n", i);
 			return getFilho(i, filhos);
 		}
 	}

@@ -108,6 +108,7 @@ void geraNode(node *nodeOrigem) {
 void inicializaFormigas(formiga *formiga, int index, node *raiz){
 	formiga->id = index;
 	insereListaLigada(raiz, &formiga->caminho);
+	formiga->caminho->prev = NULL;
 }
 
 void inicializaArvore(node *raiz){
@@ -124,13 +125,10 @@ node* escolheFilho(node *nodeAtual){
 
  // adiciona o filho escolhido gerado no caminho
 void adicionaNoCaminho(formiga *formiga, node *filho){
-	formiga->movimentos += 1;
-	printf("NODE A SER INSERIDO\n");
-	imprimeNode(filho);
 	if (estaNoCaminho(filho->matriz, formiga) == 0){
 		insereListaLigada(filho, &formiga->caminho);
+		formiga->movimentos += 1;
 	}
-	imprimeCaminhoFormiga(formiga);
 }
 
 void geraSolucao(formiga *formiga) {
@@ -141,8 +139,12 @@ void geraSolucao(formiga *formiga) {
 		node *filho = malloc(sizeof(node));
 		filho = escolheFilho(formiga->caminho->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
-		printf("movimentos formiga: %d\n", formiga->movimentos);
+		imprimeCaminhoFormiga(formiga);
+		printf("movimentos: %d\n", formiga->movimentos);
+		printf("heuristica: %d\n", formiga->caminho->nodeAtual->valorHeuristica);
+		if (formiga->movimentos >= 6) break;
 	}	
+	printf("movimentos finais: %d\n", formiga->movimentos);
 }
 
 int antsystem(){
@@ -155,7 +157,6 @@ int antsystem(){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i]);
 		}
-		printf("movimentos: %d\n", formigas[i].movimentos);
 		for (i = 0; i < QTA_FORMIGAS; i++){
 			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
 				if (formigas[i].movimentos < melhorMovimentos){
@@ -173,11 +174,12 @@ int antsystem(){
 int main(){
 	inicializaMatrizResposta(matrizResposta);
 
-	leEntrada("entradas/input1.txt", matrizInicial);
+	leEntrada("entradas/easy/1mov.txt", matrizInicial);
 	printf("\n\n");
 
 	int seed = 5;
 	inicializaRandom(seed);
 
-	printf("Movimentos: %d", antsystem());
+	antsystem();
+	//printf("Movimentos: %d\n", antsystem());
 }
