@@ -18,6 +18,13 @@ node raizArvore;
 // heuristica usada, 1 - manhattan distance, 0 - out of order
 int heuristicaUsada = 0;
 
+// peso aplicado no feromonio
+double alfa = 0.10;
+// peso aplicado na heuristica
+double beta = 1;
+// taxa de evapocarao
+double rho = 0.5;
+
 /*
 	modelagem das equações
 
@@ -44,12 +51,22 @@ int heuristicaUsada = 0;
 	
 	beta é o peso dado para o valor da heuristica. valor = 1
 
-
+	testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle
 
 */
 
-void atualizaFeromonioCaminho(){}
-void atualizaFeromonioGlobal(){}
+void atualizaFeromonioCaminho(formiga *formiga){
+	double delta = 10 / formiga->movimentos;
+	listaLigada *atual = formiga->caminho;
+	while (atual != NULL){
+		atual->nodeAtual->feromonio = atual->nodeAtual->feromonio * (1 - rho) + delta;
+		atual = atual->prev;
+	}
+}
+
+void atualizaFeromonioGlobal(){
+
+}
 
 void inicializaFilho(node *filho){
 	filho->valorHeuristica = calculaHeuristica(matrizResposta, filho->matriz, heuristicaUsada);
@@ -120,7 +137,7 @@ void inicializaArvore(node *raiz){
 
 // escolhe probabilisticamente o melhor dos filhos
 node* escolheFilho(node *nodeAtual){ 
-	return selecaoRoleta(nodeAtual->filhos, nodeAtual->qtaFilhos);
+	return selecaoRoleta(nodeAtual->filhos, nodeAtual->qtaFilhos, alfa, beta);
 }
 
  // adiciona o filho escolhido gerado no caminho
@@ -131,7 +148,8 @@ void adicionaNoCaminho(formiga *formiga, node *filho){
 	}
 }
 
-void geraSolucao(formiga *formiga) {
+void geraSolucao(formiga *formiga, node *raiz) {
+	int movAnterior = -1;
 	while (matrizIgual(matrizResposta, formiga->caminho->nodeAtual->matriz) != 1){
 		if (formiga->caminho->nodeAtual->filhos == NULL){
 			geraNode(formiga->caminho->nodeAtual);
@@ -139,10 +157,17 @@ void geraSolucao(formiga *formiga) {
 		node *filho = malloc(sizeof(node));
 		filho = escolheFilho(formiga->caminho->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
-		imprimeCaminhoFormiga(formiga);
-		printf("movimentos: %d\n", formiga->movimentos);
-		printf("heuristica: %d\n", formiga->caminho->nodeAtual->valorHeuristica);
-		if (formiga->movimentos >= 6) break;
+
+		if (formiga->movimentos == movAnterior){
+			//voltaRaizCaminho(formiga, &formiga->caminho);
+			inicializaFormigas(formiga, formiga->id, raiz);
+		}
+		// caso a formiga se perca..
+		if (formiga->movimentos >= 5000000) {
+			printf("Limite de movimentos(%d) excedido..", 5000000);
+			break;
+		}
+		movAnterior = formiga->movimentos;
 	}	
 	printf("movimentos finais: %d\n", formiga->movimentos);
 }
@@ -155,7 +180,9 @@ int antsystem(){
 	while (contadorCiclos != MAX_CICLOS){
 		for (i = 0; i < QTA_FORMIGAS; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
-			geraSolucao(&formigas[i]);
+			geraSolucao(&formigas[i], &raizArvore);
+			printf("movimentos: %d\n", formigas[i].movimentos);
+			imprimeCaminhoFormiga(&formigas[i]);
 		}
 		for (i = 0; i < QTA_FORMIGAS; i++){
 			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
@@ -163,7 +190,7 @@ int antsystem(){
 					melhorMovimentos = formigas[i].movimentos;
 				}			
 			}
-			atualizaFeromonioCaminho();
+			atualizaFeromonioCaminho(&formigas[i]);
 		}
 		contadorCiclos++;
 		atualizaFeromonioGlobal();

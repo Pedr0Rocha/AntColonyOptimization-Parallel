@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include "utils.h"
 #include "estruturas.h"
 
@@ -14,26 +15,27 @@ double randomDouble(){
 }
 
 // seleciona o filho usando roleta
-node* selecaoRoleta(listaLigada *filhos, int qtaFilhos){
-	double somatoriaFeromonio = 0;
+node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta){
+	double somatoriaProb = 0;
 	double pesosFilhos[qtaFilhos];
 	int i = 0;
 
 	listaLigada *atual = filhos;
 	while (atual != NULL){
-		somatoriaFeromonio += atual->nodeAtual->feromonio;
-		pesosFilhos[i++] = atual->nodeAtual->feromonio;
+		somatoriaProb += (pow(atual->nodeAtual->feromonio, alfa) * pow(atual->nodeAtual->valorHeuristica, beta));
+		pesosFilhos[i++] = (pow(atual->nodeAtual->feromonio, alfa) * pow(atual->nodeAtual->valorHeuristica, beta));
 		atual = atual->prev;
 	}
 	for (i = 1; i < qtaFilhos; i++)
 		pesosFilhos[i] += pesosFilhos[i-1];
 
 	double random = randomDouble();
+	printf("somatoria: %f\n", somatoriaProb);
 	for (i = 0; i < qtaFilhos; i++){
-		if (random <= pesosFilhos[i] / somatoriaFeromonio){
+		printf("peso: %f\n", pesosFilhos[i]);
+		if (random <= pesosFilhos[i] / somatoriaProb){
 			return getFilho(i, filhos);
 		}
 	}
 	return NULL;
-
 }

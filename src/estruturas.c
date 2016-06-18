@@ -110,6 +110,16 @@ int estaNoCaminho(int matriz[4][4], formiga *formiga){
 	return 0;
 }
 
+void voltaRaizCaminho(formiga *formiga, listaLigada **caminho){
+	listaLigada *atual = formiga->caminho;
+	while (atual != NULL){
+		atual = atual->prev;
+	}
+	imprimeMatriz(atual->nodeAtual->matriz);
+	//(**caminho).nodeAtual = atual->nodeAtual;
+	//(**caminho).prev = NULL;
+}
+
 // calcula quantidade de filhos do node
 int calculaQuantidadeFilhos(node *node){
 	par posZero;

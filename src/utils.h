@@ -6,6 +6,6 @@
 
 void inicializaRandom(int seed);
 double randomDouble();
-node* selecaoRoleta(listaLigada *filhos, int qtaFilhos);
+node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta);
 
 #endif

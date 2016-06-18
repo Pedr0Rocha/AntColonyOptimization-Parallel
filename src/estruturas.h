@@ -37,6 +37,7 @@ void cloneArray(int matriz[4][4], int clone[4][4]);
 void insereListaLigada(node *node, listaLigada **lista);
 node* getFilho(int i, listaLigada *filhos);
 int estaNoCaminho(int matriz[4][4], formiga *formiga);
+void voltaRaizCaminho(formiga *formiga, listaLigada **caminho);
 par achaPosicaoZero(int matriz[4][4]);
 void imprimeFilhosNode(node *node);
 void imprimeNode(node *node);
