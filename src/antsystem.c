@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <time.h>
 #include "leitor.h"
+#include "utils.h"
 #include "estruturas.h"
 #include "heuristica.h"
 
 #define MAX_CICLOS 1
-#define QTA_FORMIGAS 2
+#define QTA_FORMIGAS 1
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -58,9 +60,11 @@ void inicializaFilho(node *filho){
 void geraNode(node *nodeOrigem) {
 	par zeroPos;
 	zeroPos = achaPosicaoZero(nodeOrigem->matriz);	
+	int qtaFilhos = 0;
 
 	// vizinho na coluna da esquerda
 	if (zeroPos.y - 1 >= 0) {
+		qtaFilhos++;
 		node *filhoEsquerda = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoEsquerda->matriz);
 		filhoEsquerda->matriz[zeroPos.x][zeroPos.y] = filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1];
@@ -70,6 +74,7 @@ void geraNode(node *nodeOrigem) {
 	}
 	// vizinho na coluna da direita
 	if (zeroPos.y + 1 < 4) {
+		qtaFilhos++;
 		node *filhoDireita = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoDireita->matriz);
 		filhoDireita->matriz[zeroPos.x][zeroPos.y] = filhoDireita->matriz[zeroPos.x][zeroPos.y + 1];
@@ -79,6 +84,7 @@ void geraNode(node *nodeOrigem) {
 	}
 	// vizinho na linha de cima
 	if (zeroPos.x - 1 >= 0) {
+		qtaFilhos++;
 		node *filhoCima = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoCima->matriz);
 		filhoCima->matriz[zeroPos.x][zeroPos.y] = filhoCima->matriz[zeroPos.x - 1][zeroPos.y];
@@ -88,6 +94,7 @@ void geraNode(node *nodeOrigem) {
 	}
 	// vizinho na linha de baixo
 	if (zeroPos.x + 1 < 4) {
+		qtaFilhos++;
 		node *filhoBaixo = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoBaixo->matriz);
 		filhoBaixo->matriz[zeroPos.x][zeroPos.y] = filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y];
@@ -95,6 +102,7 @@ void geraNode(node *nodeOrigem) {
 		inicializaFilho(filhoBaixo);
 		insereListaLigada(filhoBaixo, &nodeOrigem->filhos);
 	}
+	nodeOrigem->qtaFilhos = qtaFilhos;
 }
 
 void inicializaFormigas(formiga *formiga, int index, node *raiz){
@@ -111,23 +119,30 @@ void inicializaArvore(node *raiz){
 
 // escolhe probabilisticamente o melhor dos filhos
 node* escolheFilho(node *nodeAtual){ 
-	node *filhoEscolhido = malloc(sizeof(node));
-	filhoEscolhido = selecaoRoleta(nodeAtual->filhos);
-	return filhoEscolhido;
+	return selecaoRoleta(nodeAtual->filhos, nodeAtual->qtaFilhos);
 }
 
  // adiciona o filho escolhido gerado no caminho
 void adicionaNoCaminho(formiga *formiga, node *filho){
+	formiga->movimentos += 1;
+	printf("NODE A SER INSERIDO\n");
+	imprimeNode(filho);
+	if (estaNoCaminho(filho->matriz, formiga) == 0){
+		insereListaLigada(filho, &formiga->caminho);
+	}
+	imprimeCaminhoFormiga(formiga);
 }
 
 void geraSolucao(formiga *formiga) {
-	if (formiga->caminho->nodeAtual->filhos == NULL){
-		geraNode(formiga->caminho->nodeAtual);
-	}
-	imprimeFilhosNode(formiga->caminho->nodeAtual);
-	node *filho = malloc(sizeof(node));
-	filho = escolheFilho(formiga->caminho->nodeAtual);
-	adicionaNoCaminho(formiga, filho);
+	while (matrizIgual(matrizResposta, formiga->caminho->nodeAtual->matriz) != 1){
+		if (formiga->caminho->nodeAtual->filhos == NULL){
+			geraNode(formiga->caminho->nodeAtual);
+		}
+		node *filho = malloc(sizeof(node));
+		filho = escolheFilho(formiga->caminho->nodeAtual);
+		adicionaNoCaminho(formiga, filho);
+		printf("movimentos formiga: %d\n", formiga->movimentos);
+	}	
 }
 
 int antsystem(){
@@ -136,11 +151,12 @@ int antsystem(){
 	inicializaArvore(&raizArvore);
 	int melhorMovimentos = INT_MAX;
 	while (contadorCiclos != MAX_CICLOS){
-		for (i = 0; i < QTA_FORMIGAS; ++i){
+		for (i = 0; i < QTA_FORMIGAS; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i]);
 		}
-		for (i = 0; i < QTA_FORMIGAS; ++i){
+		printf("movimentos: %d\n", formigas[i].movimentos);
+		for (i = 0; i < QTA_FORMIGAS; i++){
 			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
 				if (formigas[i].movimentos < melhorMovimentos){
 					melhorMovimentos = formigas[i].movimentos;
@@ -157,14 +173,11 @@ int antsystem(){
 int main(){
 	inicializaMatrizResposta(matrizResposta);
 
-	printf("\nMatriz Resposta\n");
-	imprimeMatriz(matrizResposta);
-	printf("\nMatriz Inicial\n");
 	leEntrada("entradas/input1.txt", matrizInicial);
-	imprimeMatriz(matrizInicial);
 	printf("\n\n");
 
-	antsystem();
+	int seed = 5;
+	inicializaRandom(seed);
 
-	//printf("Melhor Custo: " + antsystem());
+	printf("Movimentos: %d", antsystem());
 }

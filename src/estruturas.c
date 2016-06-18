@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include "estruturas.h"
 #include "heuristica.h"
 
@@ -56,6 +55,20 @@ void insereListaLigada(node *node, listaLigada **lista) {
 	}
 }
 
+// retorna o filho com index i
+node* getFilho(int i, listaLigada *filhos){
+	if (i == 0) return filhos->nodeAtual;
+	else {
+		int contador = 0;
+		listaLigada *atual = filhos;
+		while (i != contador){
+			contador++;
+			atual = atual->prev;
+		}
+		return atual->nodeAtual;
+	}
+}
+
 // acha a posicao do zero na matriz dada
 par achaPosicaoZero(int matriz[4][4]){
 	par posZero;
@@ -67,6 +80,21 @@ par achaPosicaoZero(int matriz[4][4]){
 				posZero.y = j;
 			}
 	return posZero;
+}
+
+// confere se a matriz ja esta no caminho da formiga
+int estaNoCaminho(int matriz[4][4], formiga *formiga){
+	listaLigada *atual = formiga->caminho;
+	while (atual != NULL){
+		printf("comparando: \n\n");
+		imprimeMatriz(matriz);
+		printf("\ncom: \n\n");
+		imprimeMatriz(atual->nodeAtual->matriz);
+		printf("\n\n\n");
+		if (matrizIgual(matriz, atual->nodeAtual->matriz) == 1) return 1;
+		atual = atual->prev;
+	}
+	return 0;
 }
 
 // calcula quantidade de filhos do node
@@ -100,54 +128,32 @@ void imprimeMatriz(int matriz[4][4]){
 		}
 		printf("\n");
 	}
-}
-/*
-int rouletteSelect(double[] weight) {
-	// calculate the total weight
-	double weight_sum = 0;
-	for(int i=0; i<weight.length; i++) {
-		weight_sum += weight[i];
-	}
-	// get a random value
-	double value = randUniformPositive() * weight_sum;	
-	// locate the random value based on the weights
-	for(int i=0; i<weight.length; i++) {		
-		value -= weight[i];		
-		if(value <= 0) return i;
-	}
-	// only when rounding errors occur
-	return weight.length - 1;
-}
-
-// Returns a uniformly distributed double value between 0.0 and 1.0
-double randUniformPositive() {
-	// easiest implementation
-	return new Random().nextDouble();
-}
-*/
-node* selecaoRoleta(listaLigada *filhos){
-	double somatoriaFeromonio = 0;
-	listaLigada *atual = filhos;
-	while (atual != NULL){
-		somatoriaFeromonio += atual->nodeAtual->feromonio;
-		atual = atual->prev;
-	}
-	printf("somatorio: %f\n", somatoriaFeromonio);
-	srand(time(NULL));
-	int r = (rand() % (int)somatoriaFeromonio) + 1;
-	atual = filhos;
-	while (atual != NULL){
-		if (atual->nodeAtual->feromonio + r > somatoriaFeromonio)
-			return atual->nodeAtual;
-		atual = atual->prev;
-	}
-	return NULL;
 }	
 
 void imprimeFilhosNode(node *node){
 	listaLigada *atual = node->filhos;
+	printf("Qta filhos: %d\n", node->qtaFilhos);
 	while (atual != NULL){
 		printf("Filho:\n");
+		imprimeMatriz(atual->nodeAtual->matriz);
+		atual = atual->prev;
+		printf("\n");
+	}
+}
+
+void imprimeNode(node *node){
+	printf("Node\n");
+	imprimeMatriz(node->matriz);
+	printf("\nValor Heuristica: %d\n", node->valorHeuristica);
+	printf("Feromonio: %f\n", node->feromonio);
+	imprimeFilhosNode(node);
+	printf("\n\n");
+}
+
+void imprimeCaminhoFormiga(formiga *formiga){
+	listaLigada *atual = formiga->caminho;
+	printf("Caminho da Formiga\n");
+	while (atual != NULL){
 		imprimeMatriz(atual->nodeAtual->matriz);
 		atual = atual->prev;
 		printf("\n");
