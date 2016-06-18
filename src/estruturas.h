@@ -30,17 +30,13 @@ typedef struct {
 } par;
 
 void inicializaMatrizResposta(int matrizResposta[4][4]);
-
 int calculaQuantidadeFilhos(node *node);
-
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
-
 void imprimeMatriz(int matriz[4][4]);
-
 void cloneArray(int matriz[4][4], int clone[4][4]);
-
 void insereListaLigada(node *node, listaLigada **lista);
-
 par achaPosicaoZero(int matriz[4][4]);
+node* selecaoRoleta(listaLigada *filhos);
+void imprimeFilhosNode(node *node);
 
 #endif

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "estruturas.h"
 #include "heuristica.h"
 
@@ -40,6 +41,7 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 	return 1;
 }
 
+// insere no final da lista ligada
 void insereListaLigada(node *node, listaLigada **lista) {
 	if (*lista == NULL){
 		*lista = malloc(sizeof(listaLigada)); 
@@ -67,7 +69,7 @@ par achaPosicaoZero(int matriz[4][4]){
 	return posZero;
 }
 
-// acha a posicao do zero na matriz dada
+// calcula quantidade de filhos do node
 int calculaQuantidadeFilhos(node *node){
 	par posZero;
 	int i, j;
@@ -96,6 +98,58 @@ void imprimeMatriz(int matriz[4][4]){
 			else
 				printf("%d  ", matriz[i][j]);
 		}
+		printf("\n");
+	}
+}
+/*
+int rouletteSelect(double[] weight) {
+	// calculate the total weight
+	double weight_sum = 0;
+	for(int i=0; i<weight.length; i++) {
+		weight_sum += weight[i];
+	}
+	// get a random value
+	double value = randUniformPositive() * weight_sum;	
+	// locate the random value based on the weights
+	for(int i=0; i<weight.length; i++) {		
+		value -= weight[i];		
+		if(value <= 0) return i;
+	}
+	// only when rounding errors occur
+	return weight.length - 1;
+}
+
+// Returns a uniformly distributed double value between 0.0 and 1.0
+double randUniformPositive() {
+	// easiest implementation
+	return new Random().nextDouble();
+}
+*/
+node* selecaoRoleta(listaLigada *filhos){
+	double somatoriaFeromonio = 0;
+	listaLigada *atual = filhos;
+	while (atual != NULL){
+		somatoriaFeromonio += atual->nodeAtual->feromonio;
+		atual = atual->prev;
+	}
+	printf("somatorio: %f\n", somatoriaFeromonio);
+	srand(time(NULL));
+	int r = (rand() % (int)somatoriaFeromonio) + 1;
+	atual = filhos;
+	while (atual != NULL){
+		if (atual->nodeAtual->feromonio + r > somatoriaFeromonio)
+			return atual->nodeAtual;
+		atual = atual->prev;
+	}
+	return NULL;
+}	
+
+void imprimeFilhosNode(node *node){
+	listaLigada *atual = node->filhos;
+	while (atual != NULL){
+		printf("Filho:\n");
+		imprimeMatriz(atual->nodeAtual->matriz);
+		atual = atual->prev;
 		printf("\n");
 	}
 }

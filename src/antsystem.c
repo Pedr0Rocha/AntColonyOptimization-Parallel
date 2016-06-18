@@ -14,7 +14,7 @@ int matrizResposta[4][4];
 node raizArvore;
 
 // heuristica usada, 1 - manhattan distance, 0 - out of order
-int heuristicaUsada = 1;
+int heuristicaUsada = 0;
 
 /*
 	modelagem das equações
@@ -61,7 +61,7 @@ void geraNode(node *nodeOrigem) {
 
 	// vizinho na coluna da esquerda
 	if (zeroPos.y - 1 >= 0) {
-		node *filhoEsquerda = malloc(sizeof(nodeOrigem));
+		node *filhoEsquerda = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoEsquerda->matriz);
 		filhoEsquerda->matriz[zeroPos.x][zeroPos.y] = filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1];
 		filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1] = 0;
@@ -70,7 +70,7 @@ void geraNode(node *nodeOrigem) {
 	}
 	// vizinho na coluna da direita
 	if (zeroPos.y + 1 < 4) {
-		node *filhoDireita = malloc(sizeof(nodeOrigem));
+		node *filhoDireita = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoDireita->matriz);
 		filhoDireita->matriz[zeroPos.x][zeroPos.y] = filhoDireita->matriz[zeroPos.x][zeroPos.y + 1];
 		filhoDireita->matriz[zeroPos.x][zeroPos.y + 1] = 0;
@@ -79,7 +79,7 @@ void geraNode(node *nodeOrigem) {
 	}
 	// vizinho na linha de cima
 	if (zeroPos.x - 1 >= 0) {
-		node *filhoCima = malloc(sizeof(nodeOrigem));
+		node *filhoCima = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoCima->matriz);
 		filhoCima->matriz[zeroPos.x][zeroPos.y] = filhoCima->matriz[zeroPos.x - 1][zeroPos.y];
 		filhoCima->matriz[zeroPos.x - 1][zeroPos.y] = 0;
@@ -88,7 +88,7 @@ void geraNode(node *nodeOrigem) {
 	}
 	// vizinho na linha de baixo
 	if (zeroPos.x + 1 < 4) {
-		node *filhoBaixo = malloc(sizeof(nodeOrigem));
+		node *filhoBaixo = malloc(sizeof(node));
 		cloneArray(nodeOrigem->matriz, filhoBaixo->matriz);
 		filhoBaixo->matriz[zeroPos.x][zeroPos.y] = filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y];
 		filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y] = 0;
@@ -109,20 +109,24 @@ void inicializaArvore(node *raiz){
 	raiz->filhos = NULL;
 }
 
-node* escolheMelhorFilho(){
- // esolhe probabilisticamente o melhor dos filhos 
-	return NULL;
+// escolhe probabilisticamente o melhor dos filhos
+node* escolheFilho(node *nodeAtual){ 
+	node *filhoEscolhido = malloc(sizeof(node));
+	filhoEscolhido = selecaoRoleta(nodeAtual->filhos);
+	return filhoEscolhido;
 }
 
+ // adiciona o filho escolhido gerado no caminho
 void adicionaNoCaminho(formiga *formiga, node *filho){
- // adiciona o melhor filho gerado no caminho
 }
 
 void geraSolucao(formiga *formiga) {
 	if (formiga->caminho->nodeAtual->filhos == NULL){
 		geraNode(formiga->caminho->nodeAtual);
 	}
-	node *filho = escolheMelhorFilho();
+	imprimeFilhosNode(formiga->caminho->nodeAtual);
+	node *filho = malloc(sizeof(node));
+	filho = escolheFilho(formiga->caminho->nodeAtual);
 	adicionaNoCaminho(formiga, filho);
 }
 
@@ -131,7 +135,6 @@ int antsystem(){
 	int i, contadorCiclos = 0;
 	inicializaArvore(&raizArvore);
 	int melhorMovimentos = INT_MAX;
-
 	while (contadorCiclos != MAX_CICLOS){
 		for (i = 0; i < QTA_FORMIGAS; ++i){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
