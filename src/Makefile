@@ -1,5 +1,5 @@
 ALL:
-	gcc *.c -Wall -Werror -ggdb
+	gcc *.c -Wall -Werror -ggdb -lm
 clear:
 	rm a.out
 run:

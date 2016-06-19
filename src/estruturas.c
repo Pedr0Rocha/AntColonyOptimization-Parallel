@@ -104,7 +104,25 @@ par achaPosicaoZero(int matriz[4][4]){
 int estaNoCaminho(int matriz[4][4], formiga *formiga){
 	listaLigada *atual = formiga->caminho;
 	while (atual != NULL){
-		if (matrizIgual(matriz, atual->nodeAtual->matriz) == 1) return 1;
+		if (matrizIgual(matriz, atual->nodeAtual->matriz)) return 1;
+		atual = atual->prev;
+	}
+	return 0;
+}
+
+int todosNoCaminho(formiga *formiga){
+	listaLigada *atual = formiga->caminho->nodeAtual->filhos;
+	while (atual != NULL){
+		if (!estaNoCaminho(atual->nodeAtual->matriz, formiga)) return 0;
+		atual = atual->prev;
+	}
+	return 1;
+}
+// confere se a matriz ja esta na arvore
+node* getNoCaminhoExiste(int matriz[4][4], listaLigada *lista){
+	listaLigada *atual = lista;
+	while (atual != NULL){
+		if (matrizIgual(matriz, atual->nodeAtual->matriz)) return atual->nodeAtual;
 		atual = atual->prev;
 	}
 	return 0;
