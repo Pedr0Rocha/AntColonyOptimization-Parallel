@@ -1,0 +1,152 @@
+ALFA = 0.1;
+BETA = 1;
+RHO = 0.5;
+
+
+
+SEED: 1466366415
+Formigas: 100
+Ciclos: 10
+Achou Solucao - Movimentos: 30
+Movimentos: 97
+Final do Ciclo 0
+Movimentos: 73
+Movimentos: 67
+Movimentos: 12
+Final do Ciclo 1
+Movimentos: 28
+Final do Ciclo 2
+Movimentos: 22
+Achou Solucao - Movimentos: 26
+Movimentos: 53
+Final do Ciclo 3
+Movimentos: 74
+Achou Solucao - Movimentos: 20
+Final do Ciclo 4
+Movimentos: 67
+Movimentos: 12
+Movimentos: 77
+Movimentos: 22
+Movimentos: 78
+Movimentos: 42
+Final do Ciclo 5
+Movimentos: 12
+Movimentos: 98
+Movimentos: 82
+Final do Ciclo 6
+Movimentos: 34
+Movimentos: 61
+Movimentos: 61
+Final do Ciclo 7
+Movimentos: 59
+Movimentos: 58
+Movimentos: 12
+Movimentos: 48
+Final do Ciclo 8
+Movimentos: 12
+Movimentos: 32
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 20
+Solucao Encontrada: 20
+Tempo: 458
+
+real	7m37.428s
+user	7m37.308s
+sys	0m0.116s
+
+========================================================
+
+SEED: 1466368460
+Formigas: 100
+Ciclos: 5
+Final do Ciclo 0
+Final do Ciclo 1
+Final do Ciclo 2
+Final do Ciclo 3
+Achou solucao com movimentos: 24
+Achou solucao com movimentos: 24
+Final do Ciclo 4
+
+
+Resumo
+Formigas: 100
+Ciclos: 5
+Solucao Otima: 20
+Solucao Encontrada: 24
+Tempo: 88
+
+real	1m28.677s
+user	1m28.664s
+sys	0m0.008s
+
+========================================================
+
+SEED: 1466368590
+Formigas: 100
+Ciclos: 10
+Final do Ciclo 0
+Formiga estagnou.
+Final do Ciclo 1
+Formiga estagnou.
+Final do Ciclo 2
+Final do Ciclo 3
+Achou solucao com movimentos: 22
+Final do Ciclo 4
+Final do Ciclo 5
+Formiga estagnou.
+Final do Ciclo 6
+Final do Ciclo 7
+Final do Ciclo 8
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 20
+Solucao Encontrada: 22
+Tempo: 471
+
+real	7m51.095s
+user	7m50.984s
+sys	0m0.092s
+
+========================================================
+
+SEED: 1466369069
+Formigas: 100
+Ciclos: 10
+Final do Ciclo 0
+Final do Ciclo 1
+Achou solucao com movimentos: 20
+Achou solucao com movimentos: 20
+Final do Ciclo 2
+Final do Ciclo 3
+Formiga estagnou.
+Final do Ciclo 4
+Achou solucao com movimentos: 20
+Final do Ciclo 5
+Formiga estagnou.
+Final do Ciclo 6
+Final do Ciclo 7
+Final do Ciclo 8
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 20
+Solucao Encontrada: 20
+Tempo: 496
+
+real	8m15.283s
+user	8m15.128s
+sys	0m0.104s
+
+========================================================

@@ -36,6 +36,7 @@ node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta
 		}
 	}
 	pesosFilhos[index] *= 5;
+
 	for (i = 0; i < qtaFilhos; i++)
 		somatoriaProb += pesosFilhos[i];
 

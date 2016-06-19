@@ -7,9 +7,9 @@
 #include "estruturas.h"
 #include "heuristica.h"
 
-#define MAX_CICLOS 3
-#define QTA_FORMIGAS 10
-#define ALTURA_ARVORE_MAX 10000
+#define MAX_CICLOS 10
+#define QTA_FORMIGAS 100
+#define ALTURA_ARVORE_MAX 100
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -21,7 +21,7 @@ listaLigada *nodesInseridosArvore = NULL;
 int heuristicaUsada = 0;
 
 // peso aplicado no feromonio
-double alfa = 0.10;
+double alfa = 0.1;
 // peso aplicado na heuristica
 double beta = 1;
 // taxa de evapocarao
@@ -31,14 +31,14 @@ double rho = 0.5;
 
 void atualizaFeromonioCaminho(formiga *formiga){
 	double delta;
-	delta = 10 / formiga->movimentos;
+	delta = 16.0 / formiga->movimentos;
 	listaLigada *atual = formiga->caminho;
 	double limiteInferior = 0.01;
 	while (atual != NULL){
 		if (formiga->resolvido)
 			atual->nodeAtual->feromonio = atual->nodeAtual->feromonio * (1 - rho) + delta;
 		else 
-			atual->nodeAtual->feromonio *= 0.7;
+			atual->nodeAtual->feromonio *= 0.3;			
 
 		if (atual->nodeAtual->feromonio < limiteInferior) 
 			atual->nodeAtual->feromonio = limiteInferior;
@@ -50,7 +50,7 @@ void atualizaFeromonioGlobal(){
 	listaLigada *atual = nodesInseridosArvore;
 	double limiteInferior = 0.01;
 	while (atual != NULL){
-		nodesInseridosArvore->nodeAtual->feromonio -= rho;
+		nodesInseridosArvore->nodeAtual->feromonio *= rho;
 		if (nodesInseridosArvore->nodeAtual->feromonio <= 0) 
 			nodesInseridosArvore->nodeAtual->feromonio = limiteInferior;
 		atual = atual->prev;
@@ -180,6 +180,8 @@ void adicionaNoCaminho(formiga *formiga, node *filho){
 }
 
 void geraSolucao(formiga *formiga, node *raiz) {
+	int estagnou = 0;
+	int movAnterior = -1;
 	while (matrizIgual(matrizResposta, formiga->caminho->nodeAtual->matriz) != 1){
 		if (formiga->caminho->nodeAtual->filhos == NULL){
 			geraNode(formiga->caminho->nodeAtual);
@@ -195,9 +197,20 @@ void geraSolucao(formiga *formiga, node *raiz) {
 			formiga->resolvido = 0;
 			break;
 		}
+		if (movAnterior == formiga->movimentos)
+			estagnou++;
+		else 
+			estagnou = 0;
+
+		if (estagnou > 100000){
+			formiga->resolvido = 0;
+			//printf("Formiga estagnou.\n");
+			break;
+		}
+		movAnterior = formiga->movimentos;
 	}
-	printf("Formiga resolveu? %d\n", formiga->resolvido);	
-	printf("movimentos finais: %d\n", formiga->movimentos);
+	if (formiga->resolvido)
+		printf("Achou solucao com %d movimentos\n", formiga->movimentos);
 }
 
 void freeFormigas(formiga formigas[]) {
@@ -242,14 +255,21 @@ int antsystem(){
 int main(){
 	inicializaMatrizResposta(matrizResposta);
 
-	leEntrada("entradas/med/18mov.txt", matrizInicial);
+	leEntrada("entradas/med/20mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
 	inicializaRandom(seed);
 
+	printf("Formigas: %d\n", QTA_FORMIGAS);
+	printf("Ciclos: %d\n", MAX_CICLOS);
+	int solucaoEncontrada = antsystem();
 
-	printf("Movimentos: %d\n", antsystem());
+	printf("\n\nResumo\n");
+	printf("Formigas: %d\n", QTA_FORMIGAS);
+	printf("Ciclos: %d\n", MAX_CICLOS);
+	printf("Solucao Otima: 20\n");
+	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
 	printf("Tempo: %llu\n", (time(NULL) - seed));
 }
 // testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle
