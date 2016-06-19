@@ -5,6 +5,7 @@
 
 // matriz com a configuracao correta do puzzle
 void inicializaMatrizResposta(int matrizResposta[4][4]){
+
 	/*
 	matrizResposta[0][0] = 1;
 	matrizResposta[0][1] = 2;
@@ -21,7 +22,7 @@ void inicializaMatrizResposta(int matrizResposta[4][4]){
 	matrizResposta[3][0] = 10;
 	matrizResposta[3][1] = 9;
 	matrizResposta[3][2] = 8;
-	matrizResposta[3][3] = 7;
+	matrizResposta[3][3] = 7;	
 	*/
 	matrizResposta[0][0] = 1;
 	matrizResposta[0][1] = 2;
@@ -126,16 +127,6 @@ node* getNoCaminhoExiste(int matriz[4][4], listaLigada *lista){
 		atual = atual->prev;
 	}
 	return 0;
-}
-
-void voltaRaizCaminho(formiga *formiga, listaLigada **caminho){
-	listaLigada *atual = formiga->caminho;
-	while (atual != NULL){
-		atual = atual->prev;
-	}
-	imprimeMatriz(atual->nodeAtual->matriz);
-	//(**caminho).nodeAtual = atual->nodeAtual;
-	//(**caminho).prev = NULL;
 }
 
 // calcula quantidade de filhos do node

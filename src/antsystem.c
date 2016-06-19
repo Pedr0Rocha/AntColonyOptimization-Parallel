@@ -7,8 +7,8 @@
 #include "estruturas.h"
 #include "heuristica.h"
 
-#define MAX_CICLOS 40
-#define QTA_FORMIGAS 100
+#define MAX_CICLOS 3
+#define QTA_FORMIGAS 5
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -60,13 +60,14 @@ void atualizaFeromonioCaminho(formiga *formiga){
 	double delta;
 	delta = 10 / formiga->movimentos;
 	listaLigada *atual = formiga->caminho;
-
+	double limiteInferior = 0.01;
 	while (atual != NULL){
 		if (formiga->resolvido)
 			atual->nodeAtual->feromonio = atual->nodeAtual->feromonio * (1 - rho) + delta;
 		else 
 			atual->nodeAtual->feromonio *= 0.7;
 
+		if (atual->nodeAtual->feromonio < limiteInferior) atual->nodeAtual->feromonio = limiteInferior;
 		atual = atual->prev;
 	}
 }
@@ -105,6 +106,7 @@ void geraNode(node *nodeOrigem) {
 			filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1] = 0;
 			inicializaFilho(filhoEsquerda);
 			insereListaLigada(filhoEsquerda, &nodeOrigem->filhos);
+			insereListaLigada(filhoEsquerda, &nodesInseridosArvore);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -123,6 +125,7 @@ void geraNode(node *nodeOrigem) {
 			filhoDireita->matriz[zeroPos.x][zeroPos.y + 1] = 0;
 			inicializaFilho(filhoDireita);
 			insereListaLigada(filhoDireita, &nodeOrigem->filhos);
+			insereListaLigada(filhoDireita, &nodesInseridosArvore);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -141,6 +144,7 @@ void geraNode(node *nodeOrigem) {
 			filhoCima->matriz[zeroPos.x - 1][zeroPos.y] = 0;
 			inicializaFilho(filhoCima);
 			insereListaLigada(filhoCima, &nodeOrigem->filhos);
+			insereListaLigada(filhoCima, &nodesInseridosArvore);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -159,6 +163,7 @@ void geraNode(node *nodeOrigem) {
 			filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y] = 0;
 			inicializaFilho(filhoBaixo);
 			insereListaLigada(filhoBaixo, &nodeOrigem->filhos);
+			insereListaLigada(filhoBaixo, &nodesInseridosArvore);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -208,7 +213,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 		node *filho = escolheFilho(formiga->caminho->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
 
-		if (formiga->movimentos >= 1000) {
+		if (formiga->movimentos >= 3000) {
 			formiga->resolvido = 0;
 			//printf("Limite de movimentos(%d) excedido..\n", 1000);
 			break;
@@ -217,6 +222,19 @@ void geraSolucao(formiga *formiga, node *raiz) {
 		}
 	}	
 	//printf("movimentos finais: %d\n", formiga->movimentos);
+}
+
+void freeFormigas(formiga formigas[]) {
+	int i;
+	for (i = 0; i < QTA_FORMIGAS; i++){
+		listaLigada *atual = formigas[i].caminho;
+		listaLigada *anterior;
+		while (atual != NULL){
+			anterior = atual;
+			atual = atual->prev;
+			free(anterior);
+		}
+	}
 }
 
 int antsystem(){
@@ -237,6 +255,8 @@ int antsystem(){
 			}
 			atualizaFeromonioCaminho(&formigas[i]);
 		}
+		printf("Final do Ciclo %d\n", contadorCiclos);
+		freeFormigas(formigas);
 		contadorCiclos++;
 		atualizaFeromonioGlobal();
 	}
@@ -249,9 +269,10 @@ int main(){
 	leEntrada("entradas/med/18mov.txt", matrizInicial);
 	printf("\n\n");
 
-	int seed = 5;
+	unsigned long long seed = time(NULL);
 	inicializaRandom(seed);
 
-	//antsystem();
+
 	printf("Movimentos: %d\n", antsystem());
+	printf("Tempo: %llu\n", (time(NULL) - seed));
 }

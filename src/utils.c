@@ -5,11 +5,9 @@
 #include "utils.h"
 #include "estruturas.h"
 
-void inicializaRandom(int seed){
-	//srand(seed);
-	unsigned long long s = time(NULL);
-	printf("SEED: %llu\n", s);
-	srand(s);
+void inicializaRandom(unsigned long long seed){
+	printf("SEED: %llu\n", seed);
+	srand(seed);
 }
 
 double randomDouble(){
@@ -24,21 +22,32 @@ node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta
 
 	listaLigada *atual = filhos;
 	while (atual != NULL){
-		//printf("Feromonio %f, Heuristica: %d\n", atual->nodeAtual->feromonio, atual->nodeAtual->valorHeuristica);
 		pesosFilhos[i] = (pow(atual->nodeAtual->feromonio, alfa) * pow((atual->nodeAtual->valorHeuristica+1), beta));
-		somatoriaProb += pesosFilhos[i];
 		//printf("pesosFilhos %d: %f\n", i, pesosFilhos[i]);
 		i++;
 		atual = atual->prev;
 	}
+
+	double melhorPeso = pesosFilhos[0];
+	int index = 0;
+	for (i = 1; i < qtaFilhos; i++){
+		if (pesosFilhos[i] > melhorPeso){
+			melhorPeso = pesosFilhos[i];
+			index = i;
+		}
+	}
+	pesosFilhos[index] *= 5;
+	for (i = 0; i < qtaFilhos; i++)
+		somatoriaProb += pesosFilhos[i];
 	//printf("i = %d\n", i);
 	double random = randomDouble();
 	//printf("Quantidade de filhos: %d\n", qtaFilhos);
 	//printf("Somatoria: %f\n", somatoriaProb);
 	//for (i = 0; i < qtaFilhos; i++){
-		//printf("Pesos do filho %d: %f\n",i, pesosFilhos[i]);
-		//printf("random %f <= %f\n\n", random, (pesosFilhos[i] / somatoriaProb));
-	//}
+	//	printf("Pesos do filho %d: %f\n",i, pesosFilhos[i]);
+	//	printf("random %f <= %f\n\n", random, (pesosFilhos[i] / somatoriaProb));
+	//} 
+
 	for (i = 1; i < qtaFilhos; i++)
 		pesosFilhos[i] += pesosFilhos[i-1];
 
@@ -47,7 +56,19 @@ node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta
 		if (random <= pesosFilhos[i] / somatoriaProb){
 			return getFilho(i, filhos);
 		}
-	}
-	//printf("FUDEU\n");
+	}	
+	// printf("i = %d\n", i);
+	// printf("Quantidade de filhos: %d\n", qtaFilhos);	
+	// atual = filhos;
+	// while (atual != NULL){
+	// 	printf("Feromonio %f, Heuristica: %d\n", atual->nodeAtual->feromonio, atual->nodeAtual->valorHeuristica);
+	// 	atual = atual->prev;
+	// }
+	// printf("Somatoria: %f\n", somatoriaProb);
+	// for (i = 0; i < qtaFilhos; i++){
+	// 	printf("Pesos do filho %d: %f\n",i, pesosFilhos[i]);
+	// 	printf("random %f <= %f\n\n", random, (pesosFilhos[i] / somatoriaProb));
+	// }
+	// printf("FUDEU\n");
 	return NULL;
 }
