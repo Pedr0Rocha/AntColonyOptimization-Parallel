@@ -1,50 +1,24 @@
 ALFA = 0.1;
 BETA = 1;
 RHO = 0.5;
-
+ALTURA MAX DA ARVORE = 100
 
 
 SEED: 1466366415
 Formigas: 100
 Ciclos: 10
 Achou Solucao - Movimentos: 30
-Movimentos: 97
 Final do Ciclo 0
-Movimentos: 73
-Movimentos: 67
-Movimentos: 12
 Final do Ciclo 1
-Movimentos: 28
 Final do Ciclo 2
-Movimentos: 22
 Achou Solucao - Movimentos: 26
-Movimentos: 53
 Final do Ciclo 3
-Movimentos: 74
 Achou Solucao - Movimentos: 20
 Final do Ciclo 4
-Movimentos: 67
-Movimentos: 12
-Movimentos: 77
-Movimentos: 22
-Movimentos: 78
-Movimentos: 42
 Final do Ciclo 5
-Movimentos: 12
-Movimentos: 98
-Movimentos: 82
 Final do Ciclo 6
-Movimentos: 34
-Movimentos: 61
-Movimentos: 61
 Final do Ciclo 7
-Movimentos: 59
-Movimentos: 58
-Movimentos: 12
-Movimentos: 48
 Final do Ciclo 8
-Movimentos: 12
-Movimentos: 32
 Final do Ciclo 9
 
 
@@ -90,15 +64,12 @@ SEED: 1466368590
 Formigas: 100
 Ciclos: 10
 Final do Ciclo 0
-Formiga estagnou.
 Final do Ciclo 1
-Formiga estagnou.
 Final do Ciclo 2
 Final do Ciclo 3
 Achou solucao com movimentos: 22
 Final do Ciclo 4
 Final do Ciclo 5
-Formiga estagnou.
 Final do Ciclo 6
 Final do Ciclo 7
 Final do Ciclo 8
@@ -127,11 +98,9 @@ Achou solucao com movimentos: 20
 Achou solucao com movimentos: 20
 Final do Ciclo 2
 Final do Ciclo 3
-Formiga estagnou.
 Final do Ciclo 4
 Achou solucao com movimentos: 20
 Final do Ciclo 5
-Formiga estagnou.
 Final do Ciclo 6
 Final do Ciclo 7
 Final do Ciclo 8
@@ -150,3 +119,40 @@ user	8m15.128s
 sys	0m0.104s
 
 ========================================================
+
+SEED: 1466370179
+Formigas: 100
+Ciclos: 10
+Final do Ciclo 0
+Final do Ciclo 1
+Final do Ciclo 2
+Achou solucao com 36 movimentos
+Final do Ciclo 3
+Final do Ciclo 4
+Final do Ciclo 5
+Achou solucao com 20 movimentos
+Final do Ciclo 6
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Final do Ciclo 7
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Final do Ciclo 8
+Achou solucao com 20 movimentos
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 20
+Solucao Encontrada: 20
+Tempo: 447
+
+real	7m27.000s
+user	7m26.932s
+sys	0m0.048s

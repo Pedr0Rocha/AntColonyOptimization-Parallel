@@ -4,7 +4,7 @@ RHO = 0.5;
 
 ALTURA MAX DA ARVORE = 100
 
-SEED: 1466375736
+SEED: 1466370930
 Formigas: 100
 Ciclos: 10
 Final do Ciclo 0
@@ -12,10 +12,8 @@ Final do Ciclo 1
 Final do Ciclo 2
 Final do Ciclo 3
 Final do Ciclo 4
-Achou solucao com 18 movimentos
-Achou solucao com 22 movimentos
 Final do Ciclo 5
-Achou solucao com 30 movimentos
+Achou solucao com 63 movimentos
 Final do Ciclo 6
 Final do Ciclo 7
 Final do Ciclo 8
@@ -25,74 +23,70 @@ Final do Ciclo 9
 Resumo
 Formigas: 100
 Ciclos: 10
-Solucao Otima: 18
-Solucao Encontrada: 18
-Tempo: 561
+Solucao Otima: 25
+Solucao Encontrada: 63
+Tempo: 442
 
-real	9m20.877s
-user	9m20.208s
-sys	0m0.368s
-
-========================================================
-
-SEED: 1466376318
-Formigas: 100
-Ciclos: 10
-Achou solucao com 32 movimentos
-Final do Ciclo 0
-Final do Ciclo 1
-Final do Ciclo 2
-Final do Ciclo 3
-Final do Ciclo 4
-Final do Ciclo 5
-Final do Ciclo 6
-Final do Ciclo 7
-Final do Ciclo 8
-Achou solucao com 18 movimentos
-Achou solucao com 18 movimentos
-Final do Ciclo 9
-
-
-Resumo
-Formigas: 100
-Ciclos: 10
-Solucao Otima: 18
-Solucao Encontrada: 18
-Tempo: 561
-
-real	9m20.808s
-user	9m20.176s
-sys	0m0.612s
-
-========================================================
-
-SEED: 1466376917
-Formigas: 100
-Ciclos: 10
-Final do Ciclo 0
-Final do Ciclo 1
-Final do Ciclo 2
-Final do Ciclo 3
-Final do Ciclo 4
-Final do Ciclo 5
-Final do Ciclo 6
-Final do Ciclo 7
-Achou solucao com 18 movimentos
-Final do Ciclo 8
-Achou solucao com 18 movimentos
-Achou solucao com 18 movimentos
-Achou solucao com 18 movimentos
-Achou solucao com 18 movimentos
-Final do Ciclo 9
-
-
-Resumo
-Formigas: 100
-Ciclos: 10
-Solucao Otima: 18
-Solucao Encontrada: 18
-Tempo: 484
-
-real	8m3.873s
-user	8m3.724s
+real	7m22.192s
+user	7m22.124s
 sys	0m0.052s
+
+========================================================
+
+SEED: 1466374200
+Formigas: 100
+Ciclos: 10
+Achou solucao com 33 movimentos
+Final do Ciclo 0
+Final do Ciclo 1
+Final do Ciclo 2
+Final do Ciclo 3
+Final do Ciclo 4
+Achou solucao com 39 movimentos
+Final do Ciclo 5
+Final do Ciclo 6
+Final do Ciclo 7
+Final do Ciclo 8
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 25
+Solucao Encontrada: 33
+Tempo: 488
+
+real	8m7.702s
+user	8m6.800s
+sys	0m0.620s
+
+========================================================
+
+SEED: 1466375209
+Formigas: 100
+Ciclos: 10
+Achou solucao com 49 movimentos
+Final do Ciclo 0
+Final do Ciclo 1
+Achou solucao com 43 movimentos
+Final do Ciclo 2
+Final do Ciclo 3
+Final do Ciclo 4
+Final do Ciclo 5
+Final do Ciclo 6
+Final do Ciclo 7
+Final do Ciclo 8
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 25
+Solucao Encontrada: 43
+Tempo: 470
+
+real	7m50.206s
+user	7m50.076s
+sys	0m0.104s

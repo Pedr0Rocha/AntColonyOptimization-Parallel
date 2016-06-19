@@ -9,7 +9,7 @@
 
 #define MAX_CICLOS 10
 #define QTA_FORMIGAS 100
-#define ALTURA_ARVORE_MAX 100
+#define ALTURA_ARVORE_MAX 200
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -204,7 +204,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 
 		if (estagnou > 100000){
 			formiga->resolvido = 0;
-			//printf("Formiga estagnou.\n");
+			printf("Formiga estagnou.\n");
 			break;
 		}
 		movAnterior = formiga->movimentos;
@@ -255,7 +255,7 @@ int antsystem(){
 int main(){
 	inicializaMatrizResposta(matrizResposta);
 
-	leEntrada("entradas/med/20mov.txt", matrizInicial);
+	leEntrada("entradas/hard/38mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
@@ -268,7 +268,7 @@ int main(){
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	printf("Solucao Otima: 20\n");
+	printf("Solucao Otima: 38\n");
 	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
 	printf("Tempo: %llu\n", (time(NULL) - seed));
 }
