@@ -8,7 +8,8 @@
 #include "heuristica.h"
 
 #define MAX_CICLOS 3
-#define QTA_FORMIGAS 5
+#define QTA_FORMIGAS 10
+#define ALTURA_ARVORE_MAX 10000
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -26,35 +27,7 @@ double beta = 1;
 // taxa de evapocarao
 double rho = 0.5;
 
-/*
-	modelagem das equações
 
-	equacao de probabilidade
-	prob do caminho = [feromonio pra depositar]^alfa   *  [(1/valorHeuristica + 0.01)]^beta 
-					   ---------------------------------------------------------------------
-					   Somatório([feromonio pra depositar]^alfa   *  [(1/valorHeuristica + 0.01)]^beta)
-
-	feromonio pra depositar é a quantidade de feromonio que cada formiga depositará nos nodes 
-	do caminho encontrado. este valor é alterado depois da formiga terminar de achar a solução. valor = 1 (primeira iteração)
-
-	para calcular o novo feromonio a depositar na trilha usa-se a formula
-	fer = fer * (1 - rho) + delta
-
-	rho é a taxa de evaporação. valor = 0.5
-	
-	delta = (10 / numero de movimentos para chegar na soluçao)
-	quanto menor o numero de movimentos, maior o delta e mais feromonio sera depositado naquele caminho
-
-	alfa é o peso para o feromonio aplicado nos nodes. valor = 0.10
-
-	valor da heuristica é o valor retornado pela heuristica usada. Manhattan distance
-	usa 1/valorHeuristica + 0.1 e order usa apenas o valor. Quanto maior o valor, melhor.
-	
-	beta é o peso dado para o valor da heuristica. valor = 1
-
-	testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle
-
-*/
 
 void atualizaFeromonioCaminho(formiga *formiga){
 	double delta;
@@ -67,15 +40,19 @@ void atualizaFeromonioCaminho(formiga *formiga){
 		else 
 			atual->nodeAtual->feromonio *= 0.7;
 
-		if (atual->nodeAtual->feromonio < limiteInferior) atual->nodeAtual->feromonio = limiteInferior;
+		if (atual->nodeAtual->feromonio < limiteInferior) 
+			atual->nodeAtual->feromonio = limiteInferior;
 		atual = atual->prev;
 	}
 }
 
 void atualizaFeromonioGlobal(){
 	listaLigada *atual = nodesInseridosArvore;
+	double limiteInferior = 0.01;
 	while (atual != NULL){
-		nodesInseridosArvore->nodeAtual->feromonio *= rho;
+		nodesInseridosArvore->nodeAtual->feromonio -= rho;
+		if (nodesInseridosArvore->nodeAtual->feromonio <= 0) 
+			nodesInseridosArvore->nodeAtual->feromonio = limiteInferior;
 		atual = atual->prev;
 	}
 }
@@ -175,7 +152,7 @@ void inicializaFormigas(formiga *formiga, int index, node *raiz){
 	formiga->id = index;
 	formiga->caminho = NULL;
 	formiga->movimentos = 0;
-	formiga->resolvido = 0;
+	formiga->resolvido = 1;
 	insereListaLigada(raiz, &formiga->caminho);
 }
 
@@ -194,8 +171,6 @@ node* escolheFilho(node *nodeAtual){
 
  // adiciona o filho escolhido gerado no caminho
 void adicionaNoCaminho(formiga *formiga, node *filho){
-	//printf("adicionaNoCaminho\n");
-	//printf("%p\n", filho->matriz);
 	if (estaNoCaminho(filho->matriz, formiga) == 0){
 		insereListaLigada(filho, &formiga->caminho);
 		formiga->movimentos += 1;
@@ -208,20 +183,21 @@ void geraSolucao(formiga *formiga, node *raiz) {
 	while (matrizIgual(matrizResposta, formiga->caminho->nodeAtual->matriz) != 1){
 		if (formiga->caminho->nodeAtual->filhos == NULL){
 			geraNode(formiga->caminho->nodeAtual);
-			if (todosNoCaminho(formiga)) break;
+			if (todosNoCaminho(formiga)){
+				formiga->resolvido = 0;
+				break;
+			}
 		}
 		node *filho = escolheFilho(formiga->caminho->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
 
-		if (formiga->movimentos >= 3000) {
+		if (formiga->movimentos >= ALTURA_ARVORE_MAX) {
 			formiga->resolvido = 0;
-			//printf("Limite de movimentos(%d) excedido..\n", 1000);
 			break;
-		} else {
-			formiga->resolvido = 1;
 		}
-	}	
-	//printf("movimentos finais: %d\n", formiga->movimentos);
+	}
+	printf("Formiga resolveu? %d\n", formiga->resolvido);	
+	printf("movimentos finais: %d\n", formiga->movimentos);
 }
 
 void freeFormigas(formiga formigas[]) {
@@ -276,3 +252,4 @@ int main(){
 	printf("Movimentos: %d\n", antsystem());
 	printf("Tempo: %llu\n", (time(NULL) - seed));
 }
+// testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle

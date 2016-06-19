@@ -23,7 +23,6 @@ node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta
 	listaLigada *atual = filhos;
 	while (atual != NULL){
 		pesosFilhos[i] = (pow(atual->nodeAtual->feromonio, alfa) * pow((atual->nodeAtual->valorHeuristica+1), beta));
-		//printf("pesosFilhos %d: %f\n", i, pesosFilhos[i]);
 		i++;
 		atual = atual->prev;
 	}
@@ -39,36 +38,17 @@ node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta
 	pesosFilhos[index] *= 5;
 	for (i = 0; i < qtaFilhos; i++)
 		somatoriaProb += pesosFilhos[i];
-	//printf("i = %d\n", i);
+
 	double random = randomDouble();
-	//printf("Quantidade de filhos: %d\n", qtaFilhos);
-	//printf("Somatoria: %f\n", somatoriaProb);
-	//for (i = 0; i < qtaFilhos; i++){
-	//	printf("Pesos do filho %d: %f\n",i, pesosFilhos[i]);
-	//	printf("random %f <= %f\n\n", random, (pesosFilhos[i] / somatoriaProb));
-	//} 
 
 	for (i = 1; i < qtaFilhos; i++)
 		pesosFilhos[i] += pesosFilhos[i-1];
 
 	for (i = 0; i < qtaFilhos; i++){
-		//printf("random %f <= %f\n", random, (pesosFilhos[i] / somatoriaProb));
 		if (random <= pesosFilhos[i] / somatoriaProb){
 			return getFilho(i, filhos);
 		}
 	}	
-	// printf("i = %d\n", i);
-	// printf("Quantidade de filhos: %d\n", qtaFilhos);	
-	// atual = filhos;
-	// while (atual != NULL){
-	// 	printf("Feromonio %f, Heuristica: %d\n", atual->nodeAtual->feromonio, atual->nodeAtual->valorHeuristica);
-	// 	atual = atual->prev;
-	// }
-	// printf("Somatoria: %f\n", somatoriaProb);
-	// for (i = 0; i < qtaFilhos; i++){
-	// 	printf("Pesos do filho %d: %f\n",i, pesosFilhos[i]);
-	// 	printf("random %f <= %f\n\n", random, (pesosFilhos[i] / somatoriaProb));
-	// }
-	// printf("FUDEU\n");
+	printf("Roleta retornou NULL\n");
 	return NULL;
 }
