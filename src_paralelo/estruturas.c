@@ -92,7 +92,6 @@ int estaNoCaminho(int matriz[4][4], formiga *formiga){
 	return 0;
 }
 
-// checa se todos os filhos ja estao no caminho
 int todosNoCaminho(formiga *formiga){
 	listaLigada *atual = formiga->caminho->nodeAtual->filhos;
 	while (atual != NULL){

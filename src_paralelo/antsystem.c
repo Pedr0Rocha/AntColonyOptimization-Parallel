@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
+#include <pthread.h>
 #include "leitor.h"
 #include "utils.h"
 #include "estruturas.h"
@@ -10,6 +11,7 @@
 #define MAX_CICLOS 10
 #define QTA_FORMIGAS 100
 #define ALTURA_ARVORE_MAX 100
+#define N_THREADS 4
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -27,6 +29,7 @@ double beta = 1;
 // taxa de evapocarao
 double rho = 0.5;
 
+pthread_barrier_t barreira;
 
 
 void atualizaFeromonioCaminho(formiga *formiga){
@@ -82,6 +85,7 @@ void geraNode(node *nodeOrigem) {
 			filhoEsquerda->matriz[zeroPos.x][zeroPos.y] = filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1];
 			filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1] = 0;
 			inicializaFilho(filhoEsquerda);
+			// regiao critica em todos os insereListaLigada
 			insereListaLigada(filhoEsquerda, &nodeOrigem->filhos);
 			insereListaLigada(filhoEsquerda, &nodesInseridosArvore);
 		} else {
@@ -184,6 +188,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 	int movAnterior = -1;
 	while (matrizIgual(matrizResposta, formiga->caminho->nodeAtual->matriz) != 1){
 		if (formiga->caminho->nodeAtual->filhos == NULL){
+			// regiao critica, adiciona filhos na arvore global
 			geraNode(formiga->caminho->nodeAtual);
 			if (todosNoCaminho(formiga)){
 				formiga->resolvido = 0;
@@ -226,11 +231,21 @@ void freeFormigas(formiga formigas[]) {
 	}
 }
 
+/* TODO 
+- refatorar a funcao antsystem para ser chamada por threads 
+- dividir formigas de acordo com threads
+- tratar regioes criticas
+- procurar condicoes de corrida
+- testar barreira
+- implementar tree barrier
+- otimizar overhead
+*/
 int antsystem(){
 	formiga formigas[QTA_FORMIGAS];
 	int i, contadorCiclos = 0;
 	inicializaArvore(&raizArvore);
 	int melhorMovimentos = INT_MAX;
+	// a partir daqui, dividir as formigas e executar em paralelo
 	while (contadorCiclos != MAX_CICLOS){
 		for (i = 0; i < QTA_FORMIGAS; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
@@ -239,11 +254,17 @@ int antsystem(){
 		for (i = 0; i < QTA_FORMIGAS; i++){
 			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
 				if (formigas[i].movimentos < melhorMovimentos){
+					// regiao critica
+					// resolver criando melhorMovimentos locais e comparando no final
 					melhorMovimentos = formigas[i].movimentos;
 				}			
 			}
+			// regiao critica pq o feromonio a ser atualizado eh global
 			atualizaFeromonioCaminho(&formigas[i]);
 		}
+		// todas as threads finalizadas a partir daqui
+		// atualizacao global do feromonio e contagem de ciclos
+		pthread_barrier_wait(&barreira);
 		printf("Final do Ciclo %d\n", contadorCiclos);
 		freeFormigas(formigas);
 		contadorCiclos++;
@@ -254,16 +275,28 @@ int antsystem(){
 
 int main(int argc, char **argv){
 	inicializaMatrizResposta(matrizResposta);
+	pthread_barrier_init(&barreira, NULL, N_THREADS);
 
 	leEntrada("entradas/hard/25mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
 	inicializaRandom(seed);
+	
+	pthread_t threads[N_THREADS];
+	int threadId[N_THREADS];
+
+	int i;
+	for (i = 0; i < N_THREADS; i++) {
+		threadId[i] = i;
+		pthread_create(&threads[i], NULL, antsystem, &threadId[i]);
+	}
+	for (i = 0; i < N_THREADS; i++)
+		pthread_join(threads[i++], NULL);
 
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	int solucaoEncontrada = antsystem();
+	int solucaoEncontrada = 9999;
 
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", QTA_FORMIGAS);
