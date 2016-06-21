@@ -11,22 +11,25 @@ int calculaHeuristica(int matrizResposta[4][4], int matrizComparar[4][4], int fl
 	int distanciaY = 0;
 	int i, j; 
 	int certas = 16;
-
-	for (i = 0; i < 4; i++){
-	    for (j = 0; j < 4; j++){
-	        if (matrizComparar[i][j] != matrizResposta[i][j]){
-	        	certas--;
-	            distanciaX += abs(mapaPosicoes[matrizComparar[i][j]].x - i);
-	            distanciaY += abs(mapaPosicoes[matrizComparar[i][j]].y - j);
-	        }
-	    }
-	}
 	int resposta;
-	if (flag == 1) 
-		resposta = (distanciaX + distanciaY);
-	else 
-		resposta = certas;
 
+	if (flag){
+		for (i = 0; i < 4; i++){
+		    for (j = 0; j < 4; j++){
+		        if (matrizComparar[i][j] != matrizResposta[i][j]){
+		            distanciaX += abs(mapaPosicoes[matrizComparar[i][j]].x - i);
+		            distanciaY += abs(mapaPosicoes[matrizComparar[i][j]].y - j);
+		        }
+		    }
+		}
+		resposta = 60 - (distanciaX + distanciaY);
+	} else {
+		for (i = 0; i < 4; i++)
+		    for (j = 0; j < 4; j++)
+		        if (matrizComparar[i][j] != matrizResposta[i][j])
+		        	certas--;   
+		resposta = certas;
+	}
 	return resposta;
 }
 

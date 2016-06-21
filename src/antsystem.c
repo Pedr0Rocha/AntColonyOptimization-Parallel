@@ -9,7 +9,7 @@
 
 #define MAX_CICLOS 10
 #define QTA_FORMIGAS 100
-#define ALTURA_ARVORE_MAX 200
+#define ALTURA_ARVORE_MAX 100
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -68,8 +68,8 @@ void geraNode(node *nodeOrigem) {
 	zeroPos = achaPosicaoZero(nodeOrigem->matriz);	
 	int qtaFilhos = 0;
 	node *ptNode;
+
 	// vizinho na coluna da esquerda
-	//printf("gerandoNode\n");
 	if (zeroPos.y - 1 >= 0) {
 		int matrizTemp[4][4];
 		cloneArray(nodeOrigem->matriz, matrizTemp);
@@ -169,7 +169,7 @@ node* escolheFilho(node *nodeAtual){
 	return selecaoRoleta(nodeAtual->filhos, nodeAtual->qtaFilhos, alfa, beta);
 }
 
- // adiciona o filho escolhido gerado no caminho
+// adiciona o filho escolhido no caminho
 void adicionaNoCaminho(formiga *formiga, node *filho){
 	if (estaNoCaminho(filho->matriz, formiga) == 0){
 		insereListaLigada(filho, &formiga->caminho);
@@ -252,10 +252,10 @@ int antsystem(){
 	return melhorMovimentos;
 }
 
-int main(){
+int main(int argc, char **argv){
 	inicializaMatrizResposta(matrizResposta);
 
-	leEntrada("entradas/hard/38mov.txt", matrizInicial);
+	leEntrada("entradas/hard/25mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
@@ -268,8 +268,76 @@ int main(){
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	printf("Solucao Otima: 38\n");
+	printf("Solucao Otima: 25\n");
 	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
 	printf("Tempo: %llu\n", (time(NULL) - seed));
 }
 // testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle
+
+/*
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
+ 
+float alfa;
+float beta;
+float rho;
+int formigas;
+int ciclos;
+int threads;
+char *arquivo = NULL;
+ 
+char c;
+
+void imprimeUsage(){
+    printf("Help\n\n");
+    printf("Uso: ./a.out <parametro> <valor>\n\n");
+    printf("  -a <alfa>          peso dado ao feromonio\n");
+    printf("  -b <beta>          peso dado a heuristica\n");
+    printf("  -r <rho>           taxa de evaporacao do feromonio\n");
+    printf("  -n <n_formigas>    numero de formigas\n");
+    printf("  -f <arquivo>       caminho para o arquivo de entrada\n");
+    printf("  -c <ciclos>        numero de ciclos\n");
+    printf("  -t <threads>       numero de threads\n\n");
+}
+
+Getopt
+    while ((c = getopt (argc, argv, "a:b:r:n:f:c:t:h")) != -1 || sai){
+        switch (c){
+            case 'a':
+                alfa = atof(optarg);
+                break;
+            case 'b':
+                beta = atof(optarg);
+                break;
+            case 'r':
+                rho = atof(optarg);
+                break;
+            case 'n':
+                formigas = atof(optarg);
+                break;
+            case 'c':
+                ciclos = atof(optarg);
+                break;
+            case 'f':
+                arquivo = optarg;
+                break;
+            case 't':
+                threads = atof(optarg);
+                break;
+            case 'h':
+                imprimeUsage();
+                sai = 1;
+                break;
+            case '?':
+                printf("Erro\n");
+            default:
+                abort();
+        }
+    }
+
+    printf("alfa = %f, beta = %f, rho = %f, formigas = %d, ciclos = %d, arquivo = %s, threads = %d\n",
+        alfa, beta, rho, formigas, ciclos, arquivo, threads);
+*/
