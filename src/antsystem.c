@@ -204,7 +204,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 
 		if (estagnou > 100000){
 			formiga->resolvido = 0;
-			printf("Formiga estagnou.\n");
+			printf("Starvation.\n");
 			break;
 		}
 		movAnterior = formiga->movimentos;
@@ -255,7 +255,7 @@ int antsystem(){
 int main(int argc, char **argv){
 	inicializaMatrizResposta(matrizResposta);
 
-	leEntrada("entradas/hard/25mov.txt", matrizInicial);
+	leEntrada("entradas/med/18mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
@@ -268,9 +268,9 @@ int main(int argc, char **argv){
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	printf("Solucao Otima: 25\n");
+	printf("Solucao Otima: 18\n");
 	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
-	printf("Tempo: %llu\n", (time(NULL) - seed));
+	printf("Tempo: %llu\n", (time(NULL) - seed));	
 }
 // testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle
 

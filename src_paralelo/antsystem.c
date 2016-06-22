@@ -209,7 +209,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 
 		if (estagnou > 100000){
 			formiga->resolvido = 0;
-			printf("Formiga estagnou.\n");
+			printf("Starvation.\n");
 			break;
 		}
 		movAnterior = formiga->movimentos;

@@ -90,3 +90,48 @@ Tempo: 470
 real	7m50.206s
 user	7m50.076s
 sys	0m0.104s
+
+========================================================
+
+SEED: 1466516114
+Formigas: 100
+Ciclos: 10
+Final do Ciclo 0
+Final do Ciclo 1
+Final do Ciclo 2
+Final do Ciclo 3
+Formiga estagnou.
+Final do Ciclo 4
+Achou solucao com 33 movimentos
+Final do Ciclo 5
+Final do Ciclo 6
+Final do Ciclo 7
+Final do Ciclo 8
+Final do Ciclo 9
+
+
+Resumo
+Formigas: 100
+Ciclos: 10
+Solucao Otima: 25
+Solucao Encontrada: 33
+Tempo: 424
+
+elapsed 99%CPU (0avgtext+0avgdata 33016maxresident)k
+0inputs+0outputs (0major+8019minor)pagefaults 0swaps
+
+ Performance counter stats for 'time make run':
+
+     423478,219590      task-clock (msec)         #    1,000 CPUs utilized          
+             1.131      context-switches          #    0,003 K/sec                  
+                 7      cpu-migrations            #    0,000 K/sec                  
+             8.077      page-faults               #    0,019 K/sec                  
+ 1.110.496.858.805      cycles                    #    2,622 GHz                    
+ 1.080.789.983.635      stalled-cycles-frontend   #   97,32% frontend cycles idle   
+   <not supported>      stalled-cycles-backend   
+   109.016.121.946      instructions              #    0,10  insns per cycle        
+                                                  #    9,91  stalled cycles per insn
+    36.168.481.434      branches                  #   85,408 M/sec                  
+       530.266.645      branch-misses             #    1,47% of all branches        
+
+     423,502611529 seconds time elapsed
