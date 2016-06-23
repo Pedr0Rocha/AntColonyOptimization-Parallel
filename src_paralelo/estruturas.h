@@ -26,6 +26,11 @@ struct listaLigada {
 	listaLigada *prev;
 };
 
+typedef struct{
+	int numFormigas;
+	int threadId;
+} threadArg;
+
 typedef struct {
 	int x, y;
 } par;

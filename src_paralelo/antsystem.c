@@ -8,10 +8,10 @@
 #include "estruturas.h"
 #include "heuristica.h"
 
-#define MAX_CICLOS 10
-#define QTA_FORMIGAS 100
+#define MAX_CICLOS 5
+#define QTA_FORMIGAS 40
 #define ALTURA_ARVORE_MAX 100
-#define N_THREADS 4
+#define N_THREADS 2
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -30,6 +30,7 @@ double beta = 1;
 double rho = 0.5;
 
 pthread_barrier_t barreira;
+pthread_mutex_t lock;
 
 
 void atualizaFeromonioCaminho(formiga *formiga){
@@ -86,10 +87,14 @@ void geraNode(node *nodeOrigem) {
 			filhoEsquerda->matriz[zeroPos.x][zeroPos.y - 1] = 0;
 			inicializaFilho(filhoEsquerda);
 			// regiao critica em todos os insereListaLigada
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(filhoEsquerda, &nodeOrigem->filhos);
 			insereListaLigada(filhoEsquerda, &nodesInseridosArvore);
+    		pthread_mutex_unlock(&lock);
 		} else {
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
+    		pthread_mutex_unlock(&lock);
 		}
 	}
 	// vizinho na coluna da direita
@@ -105,10 +110,14 @@ void geraNode(node *nodeOrigem) {
 			filhoDireita->matriz[zeroPos.x][zeroPos.y] = filhoDireita->matriz[zeroPos.x][zeroPos.y + 1];
 			filhoDireita->matriz[zeroPos.x][zeroPos.y + 1] = 0;
 			inicializaFilho(filhoDireita);
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(filhoDireita, &nodeOrigem->filhos);
 			insereListaLigada(filhoDireita, &nodesInseridosArvore);
+    		pthread_mutex_unlock(&lock);
 		} else {
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
+    		pthread_mutex_unlock(&lock);
 		}
 	}
 	// vizinho na linha de cima
@@ -124,10 +133,14 @@ void geraNode(node *nodeOrigem) {
 			filhoCima->matriz[zeroPos.x][zeroPos.y] = filhoCima->matriz[zeroPos.x - 1][zeroPos.y];
 			filhoCima->matriz[zeroPos.x - 1][zeroPos.y] = 0;
 			inicializaFilho(filhoCima);
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(filhoCima, &nodeOrigem->filhos);
 			insereListaLigada(filhoCima, &nodesInseridosArvore);
+    		pthread_mutex_unlock(&lock);
 		} else {
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
+    		pthread_mutex_unlock(&lock);
 		}
 	}
 	// vizinho na linha de baixo
@@ -143,13 +156,19 @@ void geraNode(node *nodeOrigem) {
 			filhoBaixo->matriz[zeroPos.x][zeroPos.y] = filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y];
 			filhoBaixo->matriz[zeroPos.x + 1][zeroPos.y] = 0;
 			inicializaFilho(filhoBaixo);
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(filhoBaixo, &nodeOrigem->filhos);
 			insereListaLigada(filhoBaixo, &nodesInseridosArvore);
+    		pthread_mutex_unlock(&lock);
 		} else {
+    		pthread_mutex_lock(&lock);
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
+    		pthread_mutex_unlock(&lock);
 		}
 	}
+    pthread_mutex_lock(&lock);
 	nodeOrigem->qtaFilhos = qtaFilhos;
+   	pthread_mutex_unlock(&lock);
 }
 
 void inicializaFormigas(formiga *formiga, int index, node *raiz){
@@ -238,61 +257,81 @@ void freeFormigas(formiga formigas[]) {
 - procurar condicoes de corrida
 - testar barreira
 - implementar tree barrier
-- otimizar overhead
+- otimizar - overhead
 */
-int antsystem(){
-	formiga formigas[QTA_FORMIGAS];
+int melhorMovi = 0;
+void *antsystem(void *threadId){
+	formiga formigas[QTA_FORMIGAS/N_THREADS];
 	int i, contadorCiclos = 0;
-	inicializaArvore(&raizArvore);
+	long id;
+	id = (long)threadId;
+	if (id == 0)
+		inicializaArvore(&raizArvore);
+
 	int melhorMovimentos = INT_MAX;
-	// a partir daqui, dividir as formigas e executar em paralelo
 	while (contadorCiclos != MAX_CICLOS){
-		for (i = 0; i < QTA_FORMIGAS; i++){
+		for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i], &raizArvore);
 		}
-		for (i = 0; i < QTA_FORMIGAS; i++){
+		for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
 			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
 				if (formigas[i].movimentos < melhorMovimentos){
 					// regiao critica
-					// resolver criando melhorMovimentos locais e comparando no final
+					pthread_mutex_lock(&lock);
 					melhorMovimentos = formigas[i].movimentos;
+					pthread_mutex_unlock(&lock);
 				}			
 			}
 			// regiao critica pq o feromonio a ser atualizado eh global
+			pthread_mutex_lock(&lock);
 			atualizaFeromonioCaminho(&formigas[i]);
+			pthread_mutex_unlock(&lock);
 		}
 		// todas as threads finalizadas a partir daqui
 		// atualizacao global do feromonio e contagem de ciclos
 		pthread_barrier_wait(&barreira);
-		printf("Final do Ciclo %d\n", contadorCiclos);
-		freeFormigas(formigas);
-		contadorCiclos++;
-		atualizaFeromonioGlobal();
+		if (id == 0){
+			printf("Final do Ciclo %d\n", contadorCiclos);
+			contadorCiclos++;
+			atualizaFeromonioGlobal();
+		}
+		//freeFormigas(formigas);
 	}
-	return melhorMovimentos;
+	printf("Melhor Mov: %d\n", melhorMovimentos);
+	return NULL;
+	//return (void*)melhorMovimentos;
 }
 
 int main(int argc, char **argv){
 	inicializaMatrizResposta(matrizResposta);
 	pthread_barrier_init(&barreira, NULL, N_THREADS);
 
-	leEntrada("entradas/hard/25mov.txt", matrizInicial);
+	leEntrada("entradas/easy/10mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
 	inicializaRandom(seed);
 	
-	pthread_t threads[N_THREADS];
-	int threadId[N_THREADS];
+	pthread_t threads[N_THREADS]; 
 
-	int i;
+	if (pthread_mutex_init(&lock, NULL) != 0) {
+        printf("Erro ao inicial Lock\n");
+        exit(1);
+    }
+
+	long i;
+	int err;
 	for (i = 0; i < N_THREADS; i++) {
-		threadId[i] = i;
-		pthread_create(&threads[i], NULL, antsystem, &threadId[i]);
+		err = pthread_create(&threads[i], NULL, antsystem, (void*)i);
+	}
+	if (err){
+		printf("Erro ao criar thread %d\n", err);
 	}
 	for (i = 0; i < N_THREADS; i++)
 		pthread_join(threads[i++], NULL);
+
+    pthread_mutex_destroy(&lock);
 
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
@@ -300,8 +339,9 @@ int main(int argc, char **argv){
 
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", QTA_FORMIGAS);
+	printf("Formigas por Thread: %d\n", QTA_FORMIGAS/N_THREADS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	printf("Solucao Otima: 25\n");
+	printf("Solucao Otima: 10\n");
 	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
 	printf("Tempo: %llu\n", (time(NULL) - seed));
 }
