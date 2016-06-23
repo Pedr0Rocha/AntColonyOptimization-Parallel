@@ -1,5 +1,5 @@
 ALL:
-	gcc *.c -Wall -ggdb -lm -O3
+	gcc *.c -Wall -ggdb -lm -O0
 clear:
 	rm a.out
 run:

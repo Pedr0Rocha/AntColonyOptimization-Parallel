@@ -3,6 +3,9 @@
 #include "estruturas.h"
 #include "heuristica.h"
 
+
+void imprimeListaLigada(listaLigada *lista);
+
 // matriz com a configuracao correta do puzzle
 void inicializaMatrizResposta(int matrizResposta[4][4]){
 	matrizResposta[0][0] = 1;
@@ -151,6 +154,16 @@ void imprimeFilhosNode(node *node){
 	while (atual != NULL){
 		printf("Filho:\n");
 		imprimeMatriz(atual->nodeAtual->matriz);
+		atual = atual->prev;
+		printf("\n");
+	}
+}	
+
+void imprimeListaLigada(listaLigada *lista){
+	listaLigada *atual = lista;
+	while (atual != NULL){
+		printf("Filho:\n");
+		printf("pt atual: %p, pt prev: %p\n", atual->nodeAtual, atual->prev);
 		atual = atual->prev;
 		printf("\n");
 	}

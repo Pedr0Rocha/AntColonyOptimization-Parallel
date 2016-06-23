@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "estruturas.h"
 #include "heuristica.h"
 
@@ -101,14 +102,10 @@ int todosNoCaminho(formiga *formiga){
 	}
 	return 1;
 }
+
 // confere se a matriz ja esta na arvore
-node* getNoCaminhoExiste(int matriz[4][4], listaLigada *lista){
-	listaLigada *atual = lista;
-	while (atual != NULL){
-		if (matrizIgual(matriz, atual->nodeAtual->matriz)) return atual->nodeAtual;
-		atual = atual->prev;
-	}
-	return 0;
+node* getNoCaminhoExiste(int matriz[4][4], hashmap *hash) {
+	return buscaHash(matriz, hash);
 }
 
 // calcula quantidade de filhos do node
@@ -174,4 +171,40 @@ void imprimeCaminhoFormiga(formiga *formiga){
 		atual = atual->prev;
 		printf("\n");
 	}
+}
+
+node* buscaHash(int matriz[4][4], hashmap *hash) {
+	int key = geraHashKey(matriz);
+	listaLigada *atual = hash->buckets[key];
+	while (atual != NULL){
+		if (matrizIgual(atual->nodeAtual->matriz, matriz))
+			return atual->nodeAtual;
+		atual = atual->prev;
+	}
+	return NULL;
+}
+
+int geraHashKey(int matriz[4][4]){
+	int i, j;
+	int key = 0;
+	for (i = 0; i < 4; i++){
+		for (j = 0; j < 4; j++){
+			key = (matriz[i][j] + (key * (9973 % MAX_BUCKETS) % MAX_BUCKETS)) % MAX_BUCKETS;
+		}
+	}
+	return key;
+}
+
+void insereHash(node *node, hashmap *hash) {
+	int key = geraHashKey(node->matriz);
+	insereListaLigada(node, &hash->buckets[key]);
+	insereListaLigada(node, &hash->todos);
+	hash->qtaNodes++;
+}
+
+void inicializaHash(hashmap *hash){
+	hash->qtaNodes = 0;
+	int i;
+	for (i = 0; i <MAX_BUCKETS; i++)
+		hash->buckets[i] = NULL;
 }
