@@ -8,8 +8,8 @@
 #include "estruturas.h"
 #include "heuristica.h"
 
-#define MAX_CICLOS 5
-#define QTA_FORMIGAS 40
+#define MAX_CICLOS 10
+#define QTA_FORMIGAS 100
 #define ALTURA_ARVORE_MAX 100
 #define N_THREADS 2
 
@@ -239,7 +239,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 
 void freeFormigas(formiga formigas[]) {
 	int i;
-	for (i = 0; i < QTA_FORMIGAS; i++){
+	for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
 		listaLigada *atual = formigas[i].caminho;
 		listaLigada *anterior;
 		while (atual != NULL){
@@ -252,14 +252,15 @@ void freeFormigas(formiga formigas[]) {
 
 /* TODO 
 - refatorar a funcao antsystem para ser chamada por threads 
-- dividir formigas de acordo com threads
+- funcao deve retornar a melhor solucao
+- dividir formigas de acordo com threads - ok
 - tratar regioes criticas
 - procurar condicoes de corrida
-- testar barreira
+- testar barreira - ok
 - implementar tree barrier
 - otimizar - overhead
 */
-int melhorMovi = 0;
+
 void *antsystem(void *threadId){
 	formiga formigas[QTA_FORMIGAS/N_THREADS];
 	int i, contadorCiclos = 0;
@@ -268,7 +269,7 @@ void *antsystem(void *threadId){
 	if (id == 0)
 		inicializaArvore(&raizArvore);
 
-	int melhorMovimentos = INT_MAX;
+	int melhorMovimentos = INT_MAX;	
 	while (contadorCiclos != MAX_CICLOS){
 		for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
@@ -290,13 +291,14 @@ void *antsystem(void *threadId){
 		}
 		// todas as threads finalizadas a partir daqui
 		// atualizacao global do feromonio e contagem de ciclos
+		printf("Thread %li esperando\n", id);
 		pthread_barrier_wait(&barreira);
 		if (id == 0){
 			printf("Final do Ciclo %d\n", contadorCiclos);
 			contadorCiclos++;
 			atualizaFeromonioGlobal();
 		}
-		//freeFormigas(formigas);
+		freeFormigas(formigas);
 	}
 	printf("Melhor Mov: %d\n", melhorMovimentos);
 	return NULL;
@@ -307,7 +309,7 @@ int main(int argc, char **argv){
 	inicializaMatrizResposta(matrizResposta);
 	pthread_barrier_init(&barreira, NULL, N_THREADS);
 
-	leEntrada("entradas/easy/10mov.txt", matrizInicial);
+	leEntrada("entradas/med/18mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
@@ -341,7 +343,7 @@ int main(int argc, char **argv){
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Formigas por Thread: %d\n", QTA_FORMIGAS/N_THREADS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	printf("Solucao Otima: 10\n");
+	printf("Solucao Otima: 18\n");
 	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
 	printf("Tempo: %llu\n", (time(NULL) - seed));
 }
