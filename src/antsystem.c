@@ -2,15 +2,19 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
+#include <sys/time.h>
+#include <pthread.h>
 #include "leitor.h"
 #include "utils.h"
 #include "estruturas.h"
 #include "heuristica.h"
 
-#define MAX_CICLOS 10
+#define MAX_CICLOS 5
 #define QTA_FORMIGAS 500
-#define ALTURA_ARVORE_MAX 100
-#define N_THREADS 2
+#define ALTURA_ARVORE_MAX 300
+#define N_THREADS 1
+#define MAX_BUCKETS_ARVORE 80000
+#define MAX_BUCKETS_CAMINHO 128
 
 int matrizInicial[4][4];
 int matrizResposta[4][4];
@@ -39,13 +43,14 @@ int contadorCiclos = 0;
 void atualizaFeromonioCaminho(formiga *formiga){
 	double delta;
 	delta = 16.0 / formiga->movimentos;
-	listaLigada *atual = formiga->caminho;
+	listaLigada *atual = formiga->caminho.todos;
 	double limiteInferior = 0.01;
 	while (atual != NULL){
 		if (formiga->resolvido)
 			atual->nodeAtual->feromonio = atual->nodeAtual->feromonio * (1 - rho) + delta;
-		else 
+		else {
 			atual->nodeAtual->feromonio *= 0.3;			
+		}
 
 		if (atual->nodeAtual->feromonio < limiteInferior) 
 			atual->nodeAtual->feromonio = limiteInferior;
@@ -157,10 +162,10 @@ void geraNode(node *nodeOrigem) {
 
 void inicializaFormigas(formiga *formiga, int index, node *raiz){
 	formiga->id = index;
-	formiga->caminho = NULL;
+	inicializaHash(&formiga->caminho, MAX_BUCKETS_CAMINHO);
 	formiga->movimentos = 0;
 	formiga->resolvido = 1;
-	insereListaLigada(raiz, &formiga->caminho);
+	insereHash(raiz, &formiga->caminho);
 }
 
 void inicializaArvore(node *raiz){
@@ -178,26 +183,39 @@ node* escolheFilho(node *nodeAtual){
 
 // adiciona o filho escolhido no caminho
 void adicionaNoCaminho(formiga *formiga, node *filho){
-	if (estaNoCaminho(filho->matriz, formiga) == 0){
-		insereListaLigada(filho, &formiga->caminho);
+	if (!getNoCaminhoExiste(filho->matriz, &formiga->caminho)){
+		insereHash(filho, &formiga->caminho);
 		formiga->movimentos += 1;
-	} else {
-		//printf("Ta no caminho\n");
 	}
 }
 
 void geraSolucao(formiga *formiga, node *raiz) {
 	int estagnou = 0;
 	int movAnterior = -1;
-	while (matrizIgual(matrizResposta, formiga->caminho->nodeAtual->matriz) != 1){
-		if (formiga->caminho->nodeAtual->filhos == NULL){
-			geraNode(formiga->caminho->nodeAtual);
-			if (todosNoCaminho(formiga)){
-				formiga->resolvido = 0;
-				break;
-			}
+	
+	clock_t t, t2;
+	t = clock();
+  	
+  	while (matrizIgual(matrizResposta, formiga->caminho.todos->nodeAtual->matriz) != 1){
+		t2 = clock();
+		t = clock();
+		pthread_mutex_lock(&lock);
+		if (formiga->caminho.todos->nodeAtual->filhos == NULL)
+			geraNode(formiga->caminho.todos->nodeAtual);	
+		pthread_mutex_unlock(&lock);
+		t = clock() - t;
+		printf("Tempo no Gera Node: %f segundos\n", ((float)t)/CLOCKS_PER_SEC);
+
+		t = clock();
+		if (todosNoCaminho(formiga)){
+			formiga->resolvido = 0;
+			break;
 		}
-		node *filho = escolheFilho(formiga->caminho->nodeAtual);
+		t = clock() - t;
+		printf("Tempo no Todos No Caminho: %f segundos\n", ((float)t)/CLOCKS_PER_SEC);
+	
+		t = clock();
+		node *filho = escolheFilho(formiga->caminho.todos->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
 
 		if (formiga->movimentos >= ALTURA_ARVORE_MAX) {
@@ -215,71 +233,151 @@ void geraSolucao(formiga *formiga, node *raiz) {
 			break;
 		}
 		movAnterior = formiga->movimentos;
+		t = clock() - t;
+		printf("Tempo no Resto: %f segundos\n", ((float)t)/CLOCKS_PER_SEC);
+		t2 = clock() - t2;
+		printf("Tempo Total: %f segundos\n", ((float)t2)/CLOCKS_PER_SEC);
 	}
 	if (formiga->resolvido)
 		printf("Achou solucao com %d movimentos\n", formiga->movimentos);
 }
 
 void freeFormigas(formiga formigas[]) {
-	int i;
-	for (i = 0; i < QTA_FORMIGAS; i++){
-		listaLigada *atual = formigas[i].caminho;
+	int i, j;
+	for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
+		listaLigada *atual = formigas[i].caminho.todos;
 		listaLigada *anterior;
 		while (atual != NULL){
 			anterior = atual;
 			atual = atual->prev;
 			free(anterior);
 		}
-	}
+		for (j = 0; j < MAX_BUCKETS_CAMINHO; j++){
+			listaLigada *atual = formigas[i].caminho.buckets[j];
+			listaLigada *anterior;
+			while (atual != NULL){
+				anterior = atual;
+				atual = atual->prev;
+				free(anterior);
+			}
+		}
+		free(formigas[i].caminho.buckets);
+	}	
 }
 
-int antsystem(){
-	formiga formigas[QTA_FORMIGAS];
-	int i, contadorCiclos = 0;
-	inicializaArvore(&raizArvore);
-	int melhorMovimentos = INT_MAX;
-	while (contadorCiclos != MAX_CICLOS){
-		for (i = 0; i < QTA_FORMIGAS; i++){
-			inicializaFormigas(&formigas[i], i, &raizArvore);
+void *antsystem(void *threadId){
+	formiga formigas[QTA_FORMIGAS/N_THREADS];
+
+	int i;
+	long id;
+	id = *(long*)threadId;
+	if (id == 0)
+		inicializaArvore(&raizArvore);
+	int melhorLocal = INT_MAX;
+
+	struct timeval inicio, final, iniciowhile, finalwhile;
+	int tmili;
+	while (contadorCiclos != MAX_CICLOS){    
+    	gettimeofday(&iniciowhile, NULL);
+		for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
+			inicializaFormigas(&formigas[i], i, &raizArvore);    
+    		gettimeofday(&inicio, NULL);
 			geraSolucao(&formigas[i], &raizArvore);
+    		gettimeofday(&final, NULL);
+    		tmili = (int) (1000 * (final.tv_sec - inicio.tv_sec) + (final.tv_usec - inicio.tv_usec) / 1000);
+    		if (i == 0)
+    			printf("Tempo da formiga %d da thread %li em gera solucao: %d\n", i, id, tmili);
 		}
-		for (i = 0; i < QTA_FORMIGAS; i++){
-			if (matrizIgual(formigas[i].caminho->nodeAtual->matriz, matrizResposta)){
-				if (formigas[i].movimentos < melhorMovimentos){
-					melhorMovimentos = formigas[i].movimentos;
+		for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
+			if (matrizIgual(formigas[i].caminho.todos->nodeAtual->matriz, matrizResposta)){
+				if (formigas[i].movimentos < melhorLocal){
+					melhorLocal = formigas[i].movimentos;
 				}			
 			}
-			atualizaFeromonioCaminho(&formigas[i]);
 		}
-		printf("Final do Ciclo %d\n", contadorCiclos);
-		freeFormigas(formigas);
-		contadorCiclos++;
-		atualizaFeromonioGlobal();
+
+		printf("Thread %li esperando\n", id);
+		pthread_barrier_wait(&barreira);
+
+		for (i = 0; i < QTA_FORMIGAS/N_THREADS; i++){
+			pthread_mutex_lock(&lock);
+			atualizaFeromonioCaminho(&formigas[i]);
+			pthread_mutex_unlock(&lock);
+		}
+		if (id == 0){
+			printf("Final do Ciclo %d\n", contadorCiclos);
+			contadorCiclos++;
+			atualizaFeromonioGlobal();	
+		}
+		freeFormigas(formigas);    
+    	gettimeofday(&finalwhile, NULL);
+    	tmili = (int) (1000 * (finalwhile.tv_sec - iniciowhile.tv_sec) + (finalwhile.tv_usec - iniciowhile.tv_usec) / 1000);
+    	printf("Tempo do While total: %d\n", tmili);
+		pthread_barrier_wait(&barreira); 
 	}
-	return melhorMovimentos;
+	pthread_mutex_lock(&lock);
+	if (globalMelhorMovimentos > melhorLocal)
+		globalMelhorMovimentos = melhorLocal;
+	pthread_mutex_unlock(&lock);
+	return NULL;
 }
 
 int main(int argc, char **argv){
 	inicializaMatrizResposta(matrizResposta);
-	inicializaHash(&nodesInseridosArvore);
+	inicializaHash(&nodesInseridosArvore, MAX_BUCKETS_ARVORE);
+	pthread_barrier_init(&barreira, NULL, N_THREADS);
 
-	leEntrada("entradas/med/18mov.txt", matrizInicial);
+	leEntrada("entradas/hard/38mov.txt", matrizInicial);
 	printf("\n\n");
 
 	unsigned long long seed = time(NULL);
 	inicializaRandom(seed);
+	
+	pthread_t threads[N_THREADS]; 
+	long threadId[N_THREADS]; 
 
+	if (pthread_mutex_init(&lock, NULL) != 0) {
+        printf("Erro ao inicial Lock\n");
+        exit(1);
+    }
+
+	long i;
+	int err;
+	for (i = 0; i < N_THREADS; i++) {
+		threadId[i] = i;
+		err = pthread_create(&threads[i], NULL, antsystem, (void*)&threadId[i]);
+	}
+	if (err)
+		printf("Erro ao criar thread %d\n", err);
+
+	for (i = 0; i < N_THREADS; i++)
+		pthread_join(threads[i++], NULL);
+
+    pthread_mutex_destroy(&lock);
+    pthread_barrier_destroy(&barreira);
+
+	
 	printf("Formigas: %d\n", QTA_FORMIGAS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	int solucaoEncontrada = antsystem();
 
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", QTA_FORMIGAS);
+	printf("Formigas por Thread: %d\n", QTA_FORMIGAS/N_THREADS);
 	printf("Ciclos: %d\n", MAX_CICLOS);
-	printf("Solucao Otima: 18\n");
-	printf("Solucao Encontrada: %d\n", solucaoEncontrada);
+	printf("Solucao Otima: 38\n");
+	printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
 	printf("Tempo: %llu\n", (time(NULL) - seed));	
 	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
+	// int i;
+	// for (i = 0; i < 1024; i++){
+	// 	int quantidade = 0;
+	// 	listaLigada *atual = nodesInseridosArvore.buckets[i];
+	// 	while (atual != NULL){
+	// 		quantidade++;
+	// 		atual = atual->prev;
+	// 	}
+	// 	printf("Quantidade no bucket %d: %d\n", i, quantidade);
+	// }
 }
 // testes: ftp://ftp.cs.princeton.edu/pub/cs226/8puzzle
 

@@ -83,21 +83,11 @@ par achaPosicaoZero(int matriz[4][4]){
 	return posZero;
 }
 
-// confere se a matriz ja esta no caminho da formiga
-int estaNoCaminho(int matriz[4][4], formiga *formiga){
-	listaLigada *atual = formiga->caminho;
-	while (atual != NULL){
-		if (matrizIgual(matriz, atual->nodeAtual->matriz)) return 1;
-		atual = atual->prev;
-	}
-	return 0;
-}
-
 // checa se todos os filhos ja estao no caminho
 int todosNoCaminho(formiga *formiga){
-	listaLigada *atual = formiga->caminho->nodeAtual->filhos;
+	listaLigada *atual = formiga->caminho.todos->nodeAtual->filhos;
 	while (atual != NULL){
-		if (!estaNoCaminho(atual->nodeAtual->matriz, formiga)) return 0;
+		if (!getNoCaminhoExiste(atual->nodeAtual->matriz, &formiga->caminho)) return 0;
 		atual = atual->prev;
 	}
 	return 1;
@@ -163,18 +153,8 @@ void imprimeNode(node *node){
 	printf("\n\n");
 }
 
-void imprimeCaminhoFormiga(formiga *formiga){
-	listaLigada *atual = formiga->caminho;
-	printf("Caminho da Formiga\n");
-	while (atual != NULL){
-		imprimeMatriz(atual->nodeAtual->matriz);
-		atual = atual->prev;
-		printf("\n");
-	}
-}
-
 node* buscaHash(int matriz[4][4], hashmap *hash) {
-	int key = geraHashKey(matriz);
+	int key = geraHashKey(matriz, hash->qtaBuckets);
 	listaLigada *atual = hash->buckets[key];
 	while (atual != NULL){
 		if (matrizIgual(atual->nodeAtual->matriz, matriz))
@@ -184,27 +164,30 @@ node* buscaHash(int matriz[4][4], hashmap *hash) {
 	return NULL;
 }
 
-int geraHashKey(int matriz[4][4]){
+int geraHashKey(int matriz[4][4], int qtaBuckets){
 	int i, j;
 	int key = 0;
 	for (i = 0; i < 4; i++){
 		for (j = 0; j < 4; j++){
-			key = (matriz[i][j] + (key * (9973 % MAX_BUCKETS) % MAX_BUCKETS)) % MAX_BUCKETS;
+			key = (matriz[i][j] + (key * (65599 % qtaBuckets) % qtaBuckets)) % qtaBuckets;
 		}
 	}
 	return key;
 }
 
 void insereHash(node *node, hashmap *hash) {
-	int key = geraHashKey(node->matriz);
+	int key = geraHashKey(node->matriz, hash->qtaBuckets);
 	insereListaLigada(node, &hash->buckets[key]);
 	insereListaLigada(node, &hash->todos);
 	hash->qtaNodes++;
 }
 
-void inicializaHash(hashmap *hash){
+void inicializaHash(hashmap *hash, int qtaBuckets){
 	hash->qtaNodes = 0;
+	hash->qtaBuckets = qtaBuckets;
+	hash->todos = NULL;
 	int i;
-	for (i = 0; i <MAX_BUCKETS; i++)
+	hash->buckets = malloc(sizeof(listaLigada *) * qtaBuckets);
+	for (i = 0; i < qtaBuckets; i++)
 		hash->buckets[i] = NULL;
 }

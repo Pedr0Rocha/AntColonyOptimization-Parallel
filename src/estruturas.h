@@ -5,8 +5,7 @@
 
 typedef struct node node;
 typedef struct listaLigada listaLigada;
-
-#define MAX_BUCKETS 1024
+typedef struct hashmap hashmap;
 
 struct node {
 	int matriz[4][4];
@@ -16,23 +15,23 @@ struct node {
 	listaLigada *filhos;
 };
 
-typedef struct {
-	int id;
-	listaLigada *caminho;
-	int movimentos;
-	int resolvido;
-} formiga;
-
 struct listaLigada {
 	node *nodeAtual;
 	listaLigada *prev;
 };
-
-typedef struct {
-	listaLigada *buckets[MAX_BUCKETS];
+struct hashmap {
+	listaLigada **buckets;
 	listaLigada *todos;
 	int qtaNodes;
-} hashmap;
+	int qtaBuckets;
+};
+
+typedef struct {
+	int id;
+	hashmap caminho;
+	int movimentos;
+	int resolvido;
+} formiga;
 
 typedef struct {
 	int x, y;
@@ -46,15 +45,13 @@ void cloneArray(int matriz[4][4], int clone[4][4]);
 void insereListaLigada(node *node, listaLigada **lista);
 node* getFilho(int i, listaLigada *filhos);
 node* getNoCaminhoExiste(int matriz[4][4], hashmap *hash);
-int estaNoCaminho(int matriz[4][4], formiga *formiga);
 int todosNoCaminho(formiga *formiga);
 par achaPosicaoZero(int matriz[4][4]);
 void imprimeFilhosNode(node *node);
 void imprimeNode(node *node);
-void imprimeCaminhoFormiga(formiga *formiga);
-int geraHashKey(int matriz[4][4]);
+int geraHashKey(int matriz[4][4], int qtaBuckets);
 node* buscaHash(int matriz[4][4], hashmap *map);
 void insereHash(node *node, hashmap *map);
-void inicializaHash(hashmap *map);
+void inicializaHash(hashmap *map, int qtaBuckets);
 
 #endif
