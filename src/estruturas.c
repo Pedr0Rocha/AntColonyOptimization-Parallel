@@ -4,27 +4,6 @@
 #include "estruturas.h"
 #include "heuristica.h"
 
-// matriz com a configuracao correta do puzzle
-void inicializaMatrizResposta(int matrizResposta[4][4]){
-	matrizResposta[0][0] = 1;
-	matrizResposta[0][1] = 2;
-	matrizResposta[0][2] = 3;
-	matrizResposta[0][3] = 4;
-	matrizResposta[1][0] = 5;
-	matrizResposta[1][1] = 6;
-	matrizResposta[1][2] = 7;
-	matrizResposta[1][3] = 8;
-	matrizResposta[2][0] = 9;
-	matrizResposta[2][1] = 10;
-	matrizResposta[2][2] = 11;
-	matrizResposta[2][3] = 12;
-	matrizResposta[3][0] = 13;
-	matrizResposta[3][1] = 14;
-	matrizResposta[3][2] = 15;
-	matrizResposta[3][3] = 0;
-}
-
-
 void cloneArray(int original[4][4], int clone[4][4]){
 	int i, j;
 	for (i = 0; i < 4; i++)
@@ -32,7 +11,6 @@ void cloneArray(int original[4][4], int clone[4][4]){
 			clone[i][j] = original[i][j];
 }
 
-// se as matrizes sao iguais retorna 1
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 	int i, j;
 	for (i = 0; i < 4; i++)
@@ -41,7 +19,6 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 	return 1;
 }
 
-// insere no final da lista ligada
 void insereListaLigada(node *node, listaLigada **lista) {
 	if (*lista == NULL){
 		*lista = malloc(sizeof(listaLigada)); 
@@ -56,13 +33,12 @@ void insereListaLigada(node *node, listaLigada **lista) {
 	}
 }
 
-// retorna o filho com index i
-node* getFilho(int i, listaLigada *filhos){
-	if (i == 0) return filhos->nodeAtual;
+node* getFilho(int index, listaLigada *filhos){
+	if (index == 0) return filhos->nodeAtual;
 	else {
 		int contador = 0;
 		listaLigada *atual = filhos;
-		while (i != contador){
+		while (index != contador){
 			contador++;
 			atual = atual->prev;
 		}
@@ -70,7 +46,6 @@ node* getFilho(int i, listaLigada *filhos){
 	}
 }
 
-// acha a posicao do zero na matriz dada
 par achaPosicaoZero(int matriz[4][4]){
 	par posZero;
 	int i, j;
@@ -98,18 +73,9 @@ node* getNoCaminhoExiste(int matriz[4][4], hashmap *hash) {
 	return buscaHash(matriz, hash);
 }
 
-// calcula quantidade de filhos do node
 int calculaQuantidadeFilhos(node *node){
-	par posZero;
-	int i, j;
 	int filhos = 0;
-	for (i = 0; i < 4; ++i)
-		for (j = 0; j < 4; ++j)
-			if (node->matriz[i][j] == 0){
-				posZero.x = i;
-				posZero.y = j;
-			}
-
+	par posZero = achaPosicaoZero(node->matriz);
 	if (posZero.y - 1 >= 0) filhos++;
 	if (posZero.y + 1 <  4) filhos++;
 	if (posZero.x - 1 >= 0) filhos++;
@@ -133,26 +99,6 @@ void imprimeMatriz(int matriz[4][4]){
 	}
 }	
 
-void imprimeFilhosNode(node *node){
-	listaLigada *atual = node->filhos;
-	printf("Qta filhos: %d\n", node->qtaFilhos);
-	while (atual != NULL){
-		printf("Filho:\n");
-		imprimeMatriz(atual->nodeAtual->matriz);
-		atual = atual->prev;
-		printf("\n");
-	}
-}
-
-void imprimeNode(node *node){
-	printf("Node\n");
-	imprimeMatriz(node->matriz);
-	printf("\nValor Heuristica: %d\n", node->valorHeuristica);
-	printf("Feromonio: %f\n", node->feromonio);
-	imprimeFilhosNode(node);
-	printf("\n\n");
-}
-
 node* buscaHash(int matriz[4][4], hashmap *hash) {
 	int key = geraHashKey(matriz, hash->qtaBuckets);
 	listaLigada *atual = hash->buckets[key];
@@ -167,11 +113,9 @@ node* buscaHash(int matriz[4][4], hashmap *hash) {
 int geraHashKey(int matriz[4][4], int qtaBuckets){
 	int i, j;
 	int key = 0;
-	for (i = 0; i < 4; i++){
-		for (j = 0; j < 4; j++){
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
 			key = (matriz[i][j] + (key * (65599 % qtaBuckets) % qtaBuckets)) % qtaBuckets;
-		}
-	}
 	return key;
 }
 

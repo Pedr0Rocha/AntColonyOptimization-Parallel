@@ -14,7 +14,6 @@ double randomDouble(){
 	return (double)rand() / (double)RAND_MAX;
 }
 
-// seleciona o filho usando roleta
 node* selecaoRoleta(listaLigada *filhos, int qtaFilhos, double alfa, double beta){
 	double somatoriaProb = 0;
 	double pesosFilhos[qtaFilhos];

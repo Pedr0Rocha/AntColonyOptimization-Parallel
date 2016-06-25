@@ -37,7 +37,6 @@ typedef struct {
 	int x, y;
 } par;
 
-void inicializaMatrizResposta(int matrizResposta[4][4]);
 int calculaQuantidadeFilhos(node *node);
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 void imprimeMatriz(int matriz[4][4]);
