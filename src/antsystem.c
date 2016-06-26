@@ -189,14 +189,19 @@ void adicionaNoCaminho(formiga *formiga, node *filho){
 	}
 }
 
+unsigned long long tempoEmGeraNode = 0;
 void geraSolucao(formiga *formiga, node *raiz) {
 	int estagnou = 0;
 	int movAnterior = -1;
+	unsigned long long tempoAntes;
   	
   	while (!matrizIgual(matrizResposta, formiga->caminho.todos->nodeAtual->matriz)){
 		pthread_mutex_lock(&lock);
-		if (formiga->caminho.todos->nodeAtual->filhos == NULL)
-			geraNode(formiga->caminho.todos->nodeAtual);	
+		if (formiga->caminho.todos->nodeAtual->filhos == NULL){
+			tempoAntes = time(NULL);
+			geraNode(formiga->caminho.todos->nodeAtual);
+			tempoEmGeraNode += (time(NULL) - tempoAntes);	
+		}
 		pthread_mutex_unlock(&lock);
 
 		if (todosNoCaminho(formiga)){
@@ -389,5 +394,6 @@ int main(int argc, char **argv){
 	else
 		printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
 	printf("Tempo: %llus\n", (time(NULL) - tempoExecucao));	
+	printf("Tempo em GeraNode: %llus\n", (tempoEmGeraNode));	
 	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
 }

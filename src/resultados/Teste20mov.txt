@@ -50,37 +50,41 @@ Nodes na Arvore: 2922778
 ==============================================================================================================================================
 ==============================================================================================================================================
 
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/med/20mov.txt -c 6 -n 512 -t 2
 
-pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 2
-alfa = 0.100000, beta = 1.000000, rho = 0.500000, formigas = 512, ciclos = 6, arquivo = entradas/med/20mov.txt, threads = 2
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/med/20mov.txt, Threads = 2
 
 
-SEED: 1466791886
-Achou solucao com 30 movimentos
-Thread 0 esperando
+SEED: 1466883276
 Thread 1 esperando
+Thread 0 esperando
 Final do Ciclo 0
-Thread 0 esperando
-Thread 1 esperando
-Final do Ciclo 1
-Thread 1 esperando
-Thread 0 esperando
-Final do Ciclo 2
-Achou solucao com 20 movimentos
-Thread 1 esperando
-Thread 0 esperando
-Final do Ciclo 3
-Achou solucao com 20 movimentos
 Achou solucao com 26 movimentos
 Thread 0 esperando
 Thread 1 esperando
-Final do Ciclo 4
-Achou solucao com 34 movimentos
+Final do Ciclo 1
+Achou solucao com 24 movimentos
+Achou solucao com 30 movimentos
+Achou solucao com 20 movimentos
 Thread 0 esperando
 Thread 1 esperando
+Final do Ciclo 2
+Achou solucao com 24 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Thread 0 esperando
+Thread 1 esperando
+Final do Ciclo 3
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 28 movimentos
+Thread 1 esperando
+Thread 0 esperando
+Final do Ciclo 4
+Achou solucao com 20 movimentos
+Thread 1 esperando
+Thread 0 esperando
 Final do Ciclo 5
-Formigas: 512
-Ciclos: 6
 
 
 Resumo
@@ -88,329 +92,229 @@ Formigas: 512
 Formigas por Thread: 256
 Ciclos: 6
 Solucao Encontrada: 20
-Tempo: 578s
-Nodes na Arvore: 2911471
+Tempo: 517s
+Nodes na Arvore: 2708391
 
- Performance counter stats for './a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 2':
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/med/20mov.txt -c 6 -n 512 -t 2':
 
-     582670,748244      task-clock (msec)         #    1,008 CPUs utilized          
-         1.361.897      context-switches          #    0,002 M/sec                  
-            12.181      cpu-migrations            #    0,021 K/sec                  
-           151.500      page-faults               #    0,260 K/sec                  
- 1.865.591.097.170      cycles                    #    3,202 GHz                      (83,35%)
- 1.840.557.346.863      stalled-cycles-frontend   #   98,66% frontend cycles idle     (83,29%)
- 1.741.302.267.601      stalled-cycles-backend    #   93,34% backend  cycles idle     (66,69%)
-    60.608.773.088      instructions              #    0,03  insns per cycle        
-                                                  #   30,37  stalled cycles per insn  (83,34%)
-    16.759.382.559      branches                  #   28,763 M/sec                    (83,33%)
-       703.633.949      branch-misses             #    4,20% of all branches          (83,34%)
+     521466,746469      task-clock (msec)         #    1,009 CPUs utilized          
+         1.185.242      context-switches          #    0,002 M/sec                  
+            15.330      cpu-migrations            #    0,029 K/sec                  
+           141.161      page-faults               #    0,271 K/sec                  
+ 1.514.005.021.741      cycles                    #    2,903 GHz                      (83,31%)
+ 1.491.212.988.490      stalled-cycles-frontend   #   98,49% frontend cycles idle     (83,33%)
+ 1.404.354.285.275      stalled-cycles-backend    #   92,76% backend  cycles idle     (66,72%)
+    53.063.391.707      instructions              #    0,04  insns per cycle        
+                                                  #   28,10  stalled cycles per insn  (83,38%)
+    14.591.339.169      branches                  #   27,981 M/sec                    (83,32%)
+       615.713.976      branch-misses             #    4,22% of all branches          (83,31%)
 
-     577,873107672 seconds time elapsed
+     516,906825639 seconds time elapsed
+
 
 
 ==============================================================================================================================================
 ==============================================================================================================================================
 
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/med/20mov.txt -c 6 -n 512 -t 4
 
-pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 4
-alfa = 0.100000, beta = 1.000000, rho = 0.500000, formigas = 512, ciclos = 6, arquivo = entradas/med/20mov.txt, threads = 4
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/med/20mov.txt, Threads = 4
 
 
-SEED: 1466792723
-Achou solucao com 32 movimentos
+SEED: 1466878771
 Thread 3 esperando
+Thread 0 esperando
 Thread 1 esperando
 Thread 2 esperando
-Thread 0 esperando
 Final do Ciclo 0
 Thread 0 esperando
-Thread 3 esperando
 Thread 2 esperando
+Thread 3 esperando
 Thread 1 esperando
 Final do Ciclo 1
+Achou solucao com 24 movimentos
+Thread 0 esperando
 Thread 1 esperando
 Thread 3 esperando
-Thread 0 esperando
 Thread 2 esperando
 Final do Ciclo 2
-Achou solucao com 28 movimentos
-Thread 0 esperando
+Achou solucao com 24 movimentos
+Achou solucao com 22 movimentos
+Achou solucao com 30 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 22 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 32 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
 Thread 2 esperando
-Thread 1 esperando
 Thread 3 esperando
+Thread 1 esperando
+Thread 0 esperando
 Final do Ciclo 3
-Thread 0 esperando
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 22 movimentos
+Achou solucao com 24 movimentos
 Thread 2 esperando
 Thread 3 esperando
 Thread 1 esperando
+Thread 0 esperando
 Final do Ciclo 4
+Achou solucao com 22 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 22 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 32 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 24 movimentos
+Achou solucao com 22 movimentos
+Achou solucao com 22 movimentos
+Achou solucao com 22 movimentos
 Thread 2 esperando
 Thread 0 esperando
 Thread 3 esperando
 Thread 1 esperando
 Final do Ciclo 5
-Formigas: 512
-Ciclos: 6
 
 
 Resumo
 Formigas: 512
 Formigas por Thread: 128
 Ciclos: 6
-Solucao Encontrada: 28
-Tempo: 603s
-Nodes na Arvore: 2902355
+Solucao Encontrada: 22
+Tempo: 604s
+Nodes na Arvore: 2874574
 
- Performance counter stats for './a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 4':
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/med/20mov.txt -c 6 -n 512 -t 4':
 
-     611042,232258      task-clock (msec)         #    1,013 CPUs utilized          
-         1.395.397      context-switches          #    0,002 M/sec                  
-            25.526      cpu-migrations            #    0,042 K/sec                  
-           151.050      page-faults               #    0,247 K/sec                  
- 1.743.249.981.904      cycles                    #    2,853 GHz                      (83,34%)
- 1.717.336.296.394      stalled-cycles-frontend   #   98,51% frontend cycles idle     (83,32%)
- 1.617.082.139.127      stalled-cycles-backend    #   92,76% backend  cycles idle     (66,71%)
-    60.234.184.601      instructions              #    0,03  insns per cycle        
-                                                  #   28,51  stalled cycles per insn  (83,34%)
-    16.644.681.872      branches                  #   27,240 M/sec                    (83,29%)
-       727.628.162      branch-misses             #    4,37% of all branches          (83,33%)
+     612342,480566      task-clock (msec)         #    1,013 CPUs utilized          
+         1.375.097      context-switches          #    0,002 M/sec                  
+            16.278      cpu-migrations            #    0,027 K/sec                  
+           149.524      page-faults               #    0,244 K/sec                  
+ 1.823.289.103.995      cycles                    #    2,978 GHz                      (83,32%)
+ 1.797.131.699.015      stalled-cycles-frontend   #   98,57% frontend cycles idle     (83,34%)
+ 1.699.328.009.766      stalled-cycles-backend    #   93,20% backend  cycles idle     (66,68%)
+    59.085.225.725      instructions              #    0,03  insns per cycle        
+                                                  #   30,42  stalled cycles per insn  (83,37%)
+    16.312.265.135      branches                  #   26,639 M/sec                    (83,31%)
+       735.673.258      branch-misses             #    4,51% of all branches          (83,34%)
 
-     603,234676754 seconds time elapsed
+     604,435934635 seconds time elapsed
+
 
 ==============================================================================================================================================
 ==============================================================================================================================================
 
-pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 8
-alfa = 0.100000, beta = 1.000000, rho = 0.500000, formigas = 512, ciclos = 6, arquivo = entradas/med/20mov.txt, threads = 8
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/med/20mov.txt -c 6 -n 512 -t 8
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/med/20mov.txt, Threads = 8
 
 
-SEED: 1466793399
+SEED: 1466879406
+Thread 0 esperando
+Thread 7 esperando
+Thread 5 esperando
+Thread 3 esperando
+Thread 4 esperando
 Thread 2 esperando
+Thread 6 esperando
 Thread 1 esperando
-Thread 3 esperando
-Thread 4 esperando
-Thread 7 esperando
-Thread 0 esperando
-Thread 5 esperando
-Thread 6 esperando
 Final do Ciclo 0
-Thread 7 esperando
+Achou solucao com 50 movimentos
+Achou solucao com 20 movimentos
 Thread 2 esperando
-Thread 4 esperando
-Thread 5 esperando
 Thread 3 esperando
-Thread 6 esperando
+Thread 5 esperando
+Thread 7 esperando
+Thread 4 esperando
 Thread 0 esperando
+Thread 6 esperando
 Thread 1 esperando
 Final do Ciclo 1
-Thread 0 esperando
-Thread 2 esperando
-Achou solucao com 52 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 24 movimentos
+Thread 6 esperando
+Thread 7 esperando
 Thread 1 esperando
 Thread 3 esperando
 Thread 4 esperando
+Thread 2 esperando
+Thread 0 esperando
 Thread 5 esperando
-Thread 6 esperando
-Thread 7 esperando
 Final do Ciclo 2
-Thread 2 esperando
-Thread 3 esperando
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
 Thread 6 esperando
-Thread 4 esperando
-Thread 0 esperando
 Thread 1 esperando
-Thread 7 esperando
+Achou solucao com 20 movimentos
 Thread 5 esperando
+Thread 2 esperando
+Thread 7 esperando
+Thread 4 esperando
+Thread 3 esperando
+Thread 0 esperando
 Final do Ciclo 3
-Thread 3 esperando
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
+Achou solucao com 20 movimentos
 Thread 2 esperando
-Thread 5 esperando
-Thread 4 esperando
-Thread 7 esperando
-Thread 1 esperando
+Achou solucao com 20 movimentos
 Thread 0 esperando
+Thread 3 esperando
+Thread 4 esperando
+Thread 1 esperando
+Thread 7 esperando
 Thread 6 esperando
+Thread 5 esperando
 Final do Ciclo 4
 Thread 2 esperando
+Thread 0 esperando
 Thread 7 esperando
-Thread 5 esperando
-Thread 4 esperando
 Thread 6 esperando
+Thread 5 esperando
 Thread 3 esperando
 Thread 1 esperando
-Thread 0 esperando
+Thread 4 esperando
 Final do Ciclo 5
-Formigas: 512
-Ciclos: 6
 
 
 Resumo
 Formigas: 512
 Formigas por Thread: 64
 Ciclos: 6
-Solucao Encontrada: 52
-Tempo: 614s
-Nodes na Arvore: 2887056
-
- Performance counter stats for './a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 8':
-
-     623703,657023      task-clock (msec)         #    1,016 CPUs utilized          
-         1.387.599      context-switches          #    0,002 M/sec                  
-            39.686      cpu-migrations            #    0,064 K/sec                  
-           150.212      page-faults               #    0,241 K/sec                  
- 1.677.023.322.393      cycles                    #    2,689 GHz                      (83,33%)
- 1.651.499.206.579      stalled-cycles-frontend   #   98,48% frontend cycles idle     (83,33%)
- 1.552.666.090.251      stalled-cycles-backend    #   92,58% backend  cycles idle     (66,70%)
-    59.687.821.109      instructions              #    0,04  insns per cycle        
-                                                  #   27,67  stalled cycles per insn  (83,38%)
-    16.471.026.841      branches                  #   26,408 M/sec                    (83,34%)
-       737.045.281      branch-misses             #    4,47% of all branches          (83,30%)
-
-     613,838133443 seconds time elapsed
-
-pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ 
-
-==============================================================================================================================================
-==============================================================================================================================================
-
-pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 16
-alfa = 0.100000, beta = 1.000000, rho = 0.500000, formigas = 512, ciclos = 6, arquivo = entradas/med/20mov.txt, threads = 16
-
-
-SEED: 1466794047
-Thread 12 esperando
-Thread 5 esperando
-Thread 6 esperando
-Thread 15 esperando
-Thread 0 esperando
-Thread 9 esperando
-Thread 11 esperando
-Thread 10 esperando
-Thread 13 esperando
-Thread 1 esperando
-Thread 4 esperando
-Thread 7 esperando
-Thread 3 esperando
-Thread 14 esperando
-Thread 8 esperando
-Thread 2 esperando
-Final do Ciclo 0
-Thread 12 esperando
-Thread 0 esperando
-Thread 2 esperando
-Thread 11 esperando
-Thread 14 esperando
-Thread 5 esperando
-Thread 15 esperando
-Thread 1 esperando
-Thread 10 esperando
-Thread 4 esperando
-Thread 3 esperando
-Thread 13 esperando
-Thread 9 esperando
-Thread 7 esperando
-Thread 6 esperando
-Thread 8 esperando
-Final do Ciclo 1
-Thread 15 esperando
-Thread 14 esperando
-Thread 3 esperando
-Thread 2 esperando
-Thread 9 esperando
-Thread 1 esperando
-Thread 8 esperando
-Thread 12 esperando
-Thread 10 esperando
-Thread 11 esperando
-Thread 6 esperando
-Thread 4 esperando
-Thread 0 esperando
-Thread 5 esperando
-Thread 13 esperando
-Thread 7 esperando
-Final do Ciclo 2
-Achou solucao com 22 movimentos
-Achou solucao com 22 movimentos
-Thread 1 esperando
-Thread 9 esperando
-Thread 15 esperando
-Thread 4 esperando
-Thread 12 esperando
-Thread 13 esperando
-Thread 5 esperando
-Thread 14 esperando
-Thread 11 esperando
-Thread 2 esperando
-Thread 0 esperando
-Thread 10 esperando
-Thread 8 esperando
-Thread 3 esperando
-Thread 6 esperando
-Thread 7 esperando
-Final do Ciclo 3
-Achou solucao com 20 movimentos
-Thread 14 esperando
-Thread 9 esperando
-Thread 6 esperando
-Thread 2 esperando
-Thread 3 esperando
-Thread 10 esperando
-Thread 15 esperando
-Thread 12 esperando
-Thread 4 esperando
-Thread 0 esperando
-Thread 11 esperando
-Thread 8 esperando
-Thread 5 esperando
-Thread 1 esperando
-Thread 13 esperando
-Thread 7 esperando
-Final do Ciclo 4
-Achou solucao com 20 movimentos
-Achou solucao com 20 movimentos
-Thread 12 esperando
-Thread 13 esperando
-Thread 9 esperando
-Thread 14 esperando
-Thread 15 esperando
-Thread 2 esperando
-Thread 10 esperando
-Thread 0 esperando
-Thread 8 esperando
-Thread 3 esperando
-Thread 4 esperando
-Thread 5 esperando
-Thread 7 esperando
-Thread 11 esperando
-Thread 1 esperando
-Thread 6 esperando
-Final do Ciclo 5
-Formigas: 512
-Ciclos: 6
-
-
-Resumo
-Formigas: 512
-Formigas por Thread: 32
-Ciclos: 6
 Solucao Encontrada: 20
-Tempo: 625s
-Nodes na Arvore: 2917587
+Tempo: 615s
+Nodes na Arvore: 2891471
 
- Performance counter stats for './a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/20mov.txt -c 6 -t 16':
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/med/20mov.txt -c 6 -n 512 -t 8':
 
-     635677,413174      task-clock (msec)         #    1,016 CPUs utilized          
-         1.403.599      context-switches          #    0,002 M/sec                  
-            89.707      cpu-migrations            #    0,141 K/sec                  
-           151.855      page-faults               #    0,239 K/sec                  
- 1.711.370.806.017      cycles                    #    2,692 GHz                      (83,32%)
- 1.685.091.493.211      stalled-cycles-frontend   #   98,46% frontend cycles idle     (83,27%)
- 1.583.932.880.236      stalled-cycles-backend    #   92,55% backend  cycles idle     (66,75%)
-    60.693.769.872      instructions              #    0,04  insns per cycle        
-                                                  #   27,76  stalled cycles per insn  (83,39%)
-    16.788.037.523      branches                  #   26,410 M/sec                    (83,34%)
-       756.198.508      branch-misses             #    4,50% of all branches          (83,32%)
+     623974,867631      task-clock (msec)         #    1,014 CPUs utilized          
+         1.385.229      context-switches          #    0,002 M/sec                  
+            45.134      cpu-migrations            #    0,072 K/sec                  
+           150.541      page-faults               #    0,241 K/sec                  
+ 1.921.428.575.246      cycles                    #    3,079 GHz                      (83,35%)
+ 1.895.244.413.037      stalled-cycles-frontend   #   98,64% frontend cycles idle     (83,32%)
+ 1.796.841.699.513      stalled-cycles-backend    #   93,52% backend  cycles idle     (66,69%)
+    59.917.028.873      instructions              #    0,03  insns per cycle        
+                                                  #   31,63  stalled cycles per insn  (83,38%)
+    16.564.903.654      branches                  #   26,547 M/sec                    (83,32%)
+       741.438.142      branch-misses             #    4,48% of all branches          (83,33%)
 
-     625,502846921 seconds time elapsed
+     615,524326206 seconds time elapsed
 
-pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ 
