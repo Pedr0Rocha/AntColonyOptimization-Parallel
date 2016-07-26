@@ -5,12 +5,11 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <pthread.h>
 #include <ctype.h>
-#include "leitor.h"
-#include "utils.h"
-#include "estruturas.h"
-#include "heuristica.h"
+#include "includes/leitor.h"
+#include "includes/utils.h"
+#include "includes/estruturas.h"
+#include "includes/heuristica.h"
 
 #define ALTURA_ARVORE_MAX 500
 #define MAX_BUCKETS_ARVORE 64000
@@ -33,12 +32,8 @@ double beta = 1;
 double rho = 0.5;
 int maxCiclos = 5;
 int qtaFormigas = 500;
-int nThreads = 1;
 char *arquivo = NULL;
 unsigned long long seed = 0;
-
-pthread_barrier_t barreira;
-pthread_mutex_t lock;
 
 int globalMelhorMovimentos = INT_MAX;
 int contadorCiclos = 0;
@@ -196,13 +191,11 @@ void geraSolucao(formiga *formiga, node *raiz) {
 	unsigned long long tempoAntes;
   	
   	while (!matrizIgual(matrizResposta, formiga->caminho.todos->nodeAtual->matriz)){
-		pthread_mutex_lock(&lock);
 		if (formiga->caminho.todos->nodeAtual->filhos == NULL){
 			tempoAntes = time(NULL);
 			geraNode(formiga->caminho.todos->nodeAtual);
 			tempoEmGeraNode += (time(NULL) - tempoAntes);	
 		}
-		pthread_mutex_unlock(&lock);
 
 		if (todosNoCaminho(formiga)){
 			formiga->resolvido = 0;
@@ -233,7 +226,7 @@ void geraSolucao(formiga *formiga, node *raiz) {
 
 void freeFormigas(formiga formigas[]) {
 	int i, j;
-	for (i = 0; i < qtaFormigas/nThreads; i++){
+	for (i = 0; i < qtaFormigas; i++){
 		listaLigada *atual = formigas[i].caminho.todos;
 		listaLigada *anterior;
 		while (atual != NULL){
@@ -254,48 +247,30 @@ void freeFormigas(formiga formigas[]) {
 	}	
 }
 
-void *antsystem(void *threadId){
-	formiga formigas[qtaFormigas/nThreads];
+void *antsystem(){
+	formiga formigas[qtaFormigas];
 
 	int i;
-	long id;
-	id = *(long*)threadId;
-	if (id == 0)
-		inicializaArvore(&raizArvore);
-	int melhorLocal = INT_MAX;
+	inicializaArvore(&raizArvore);
+	int melhorMovimentos = INT_MAX;
 
 	while (contadorCiclos != maxCiclos){    
-		for (i = 0; i < qtaFormigas/nThreads; i++){
+		for (i = 0; i < qtaFormigas; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i], &raizArvore);
 		}
-		for (i = 0; i < qtaFormigas/nThreads; i++){
-			if (matrizIgual(formigas[i].caminho.todos->nodeAtual->matriz, matrizResposta)){
-				if (formigas[i].movimentos < melhorLocal){
-					melhorLocal = formigas[i].movimentos;
-				}			
-			}
-		}
-		printf("Thread %li esperando\n", id);
-		pthread_barrier_wait(&barreira);
-
-		for (i = 0; i < qtaFormigas/nThreads; i++){
-			pthread_mutex_lock(&lock);
+		for (i = 0; i < qtaFormigas; i++) {
+			if (matrizIgual(formigas[i].caminho.todos->nodeAtual->matriz, matrizResposta))
+				if (formigas[i].movimentos < melhorMovimentos)
+					melhorMovimentos = formigas[i].movimentos;
 			atualizaFeromonioCaminho(&formigas[i]);
-			pthread_mutex_unlock(&lock);
-		}
-		if (id == 0){
-			printf("Final do Ciclo %d\n", contadorCiclos);
-			contadorCiclos++;
-			atualizaFeromonioGlobal();	
-		}
+		}	
+		printf("Final do Ciclo %d\n", contadorCiclos);
+		contadorCiclos++;
+		atualizaFeromonioGlobal();	
 		freeFormigas(formigas);    
-		pthread_barrier_wait(&barreira); 
 	}
-	pthread_mutex_lock(&lock);
-	if (globalMelhorMovimentos > melhorLocal)
-		globalMelhorMovimentos = melhorLocal;
-	pthread_mutex_unlock(&lock);
+	globalMelhorMovimentos = melhorMovimentos;
 	return NULL;
 }
 
@@ -314,7 +289,7 @@ void imprimeUsage(){
 
 int main(int argc, char **argv){
 	char c;
-    while ((c = getopt (argc, argv, "a:b:r:n:f:c:s:t:h")) != -1){
+    while ((c = getopt (argc, argv, "a:b:r:n:f:c:s:h")) != -1){
 	    switch (c){
 	        case 'a':
 	            alfa = atof(optarg);
@@ -337,14 +312,6 @@ int main(int argc, char **argv){
 	        case 'f':
 	            arquivo = optarg;
 	            break;
-	        case 't':
-	            nThreads = atoi(optarg);
-	            if (qtaFormigas % nThreads != 0){
-	            	printf("%d\n", qtaFormigas/nThreads);
-	            	printf("A quantidade de threads deve ser divisivel pelo numero de formigas\n");
-	            	exit(1);
-	            } 
-	            break;
 	        case 'h':
 	            imprimeUsage();
 	            exit(0);
@@ -354,40 +321,22 @@ int main(int argc, char **argv){
 	            abort();
 	    }
 	}
-    printf("\nAlfa = %.2f, Beta = %.2f, Rho = %.2f, Formigas = %d, Ciclos = %d, Arquivo = %s, Threads = %d\n",
-        alfa, beta, rho, qtaFormigas, maxCiclos, arquivo, nThreads);
+    printf("\nAlfa = %.2f, Beta = %.2f, Rho = %.2f, Formigas = %d, Ciclos = %d, Arquivo = %s",
+        alfa, beta, rho, qtaFormigas, maxCiclos, arquivo);
 
 	inicializaHash(&nodesInseridosArvore, MAX_BUCKETS_ARVORE);
 	leEntrada(arquivo, matrizInicial);
 	printf("\n\n");
 	if (seed == 0)
 		seed = time(NULL);
+ 	unsigned long long tempoExecucao = time(NULL);
 	inicializaRandom(seed);
 
-	pthread_barrier_init(&barreira, NULL, nThreads);
-	pthread_mutex_init(&lock, NULL);
-	pthread_t threads[nThreads]; 
-	long threadId[nThreads]; 
-
-	long i;
-	int err = 0;
-	unsigned long long tempoExecucao = time(NULL);
-	for (i = 0; i < nThreads; i++) {
-		threadId[i] = i;
-		err = pthread_create(&threads[i], NULL, antsystem, (void*)&threadId[i]);
-	}
-	if (err)
-		printf("Erro ao criar thread %d\n", err);
-
-	for (i = 0; i < nThreads; i++)
-		pthread_join(threads[i++], NULL);
-
-    pthread_mutex_destroy(&lock);
-    pthread_barrier_destroy(&barreira);
+	antsystem();
 
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", qtaFormigas);
-	printf("Formigas por Thread: %d\n", qtaFormigas/nThreads);
+	printf("Formigas por Thread: %d\n", qtaFormigas);
 	printf("Ciclos: %d\n", maxCiclos);
 	if (globalMelhorMovimentos == INT_MAX)
 		printf("Solucao Encontrada: Nenhuma\n");

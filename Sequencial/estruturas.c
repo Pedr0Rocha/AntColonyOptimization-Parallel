@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "estruturas.h"
-#include "heuristica.h"
+#include "includes/estruturas.h"
+#include "includes/heuristica.h"
 
 void cloneArray(int original[4][4], int clone[4][4]){
 	int i, j;

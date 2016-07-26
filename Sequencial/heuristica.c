@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "heuristica.h"
-#include "estruturas.h"
+#include "includes/heuristica.h"
+#include "includes/estruturas.h"
 
 par mapaPosicoesCorretas[16] = {
 	{ 2 , 1 },	{ 0 , 0 },	{ 0 , 1 },	{ 0 , 2 },

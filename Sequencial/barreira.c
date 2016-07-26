@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdatomic.h>
-#include "barreira.h"
+#include "includes/barreira.h"
 
 void constroiArvore(nodeBarreira *pai, barreira *barr, int profundidade){
 	if (profundidade == 0){

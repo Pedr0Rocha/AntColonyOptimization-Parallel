@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "leitor.h"
+#include "includes/leitor.h"
 
 
 void leEntrada(char *caminho, int matriz[4][4]){
