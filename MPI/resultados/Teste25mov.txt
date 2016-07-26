@@ -1,0 +1,257 @@
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 1
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/hard/25mov.txt, Threads = 1
+
+
+SEED: 1466877853
+Thread 0 esperando
+Final do Ciclo 0
+Achou solucao com 49 movimentos
+Thread 0 esperando
+Final do Ciclo 1
+Thread 0 esperando
+Final do Ciclo 2
+Thread 0 esperando
+Final do Ciclo 3
+Thread 0 esperando
+Final do Ciclo 4
+Achou solucao com 43 movimentos
+Thread 0 esperando
+Final do Ciclo 5
+
+
+Resumo
+Formigas: 512
+Formigas por Thread: 512
+Ciclos: 6
+Solucao Encontrada: 43
+Tempo: 533s
+Nodes na Arvore: 2911011
+
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 1':
+
+     533012,038904      task-clock (msec)         #    1,000 CPUs utilized          
+             3.320      context-switches          #    0,006 K/sec                  
+                22      cpu-migrations            #    0,000 K/sec                  
+           151.531      page-faults               #    0,284 K/sec                  
+ 1.955.853.122.294      cycles                    #    3,669 GHz                      (83,33%)
+ 1.934.079.039.246      stalled-cycles-frontend   #   98,89% frontend cycles idle     (83,33%)
+ 1.838.757.355.413      stalled-cycles-backend    #   94,01% backend  cycles idle     (66,67%)
+    51.836.380.346      instructions              #    0,03  insns per cycle        
+                                                  #   37,31  stalled cycles per insn  (83,33%)
+    15.083.402.971      branches                  #   28,298 M/sec                    (83,33%)
+       634.510.711      branch-misses             #    4,21% of all branches          (83,33%)
+
+     533,125154579 seconds time elapsed
+
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 2 -s 1466869056
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/hard/25mov.txt, Threads = 2
+
+
+SEED: 1466869056
+Thread 1 esperando
+Thread 0 esperando
+Final do Ciclo 0
+Thread 0 esperando
+Thread 1 esperando
+Final do Ciclo 1
+Thread 0 esperando
+Thread 1 esperando
+Final do Ciclo 2
+Thread 1 esperando
+Thread 0 esperando
+Final do Ciclo 3
+Thread 1 esperando
+Thread 0 esperando
+Final do Ciclo 4
+Achou solucao com 49 movimentos
+Thread 1 esperando
+Thread 0 esperando
+Final do Ciclo 5
+
+
+Resumo
+Formigas: 512
+Formigas por Thread: 256
+Ciclos: 6
+Solucao Encontrada: 49
+Tempo: 556s
+Nodes na Arvore: 2908577
+
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 2 -s 1466869056':
+
+     561617,768736      task-clock (msec)         #    1,010 CPUs utilized          
+         1.361.745      context-switches          #    0,002 M/sec                  
+            10.593      cpu-migrations            #    0,019 K/sec                  
+           151.551      page-faults               #    0,270 K/sec                  
+ 1.607.979.819.494      cycles                    #    2,863 GHz                      (83,36%)
+ 1.582.872.333.663      stalled-cycles-frontend   #   98,44% frontend cycles idle     (83,31%)
+ 1.491.445.419.085      stalled-cycles-backend    #   92,75% backend  cycles idle     (66,74%)
+    59.802.559.184      instructions              #    0,04  insns per cycle        
+                                                  #   26,47  stalled cycles per insn  (83,39%)
+    16.570.609.779      branches                  #   29,505 M/sec                    (83,26%)
+       706.491.832      branch-misses             #    4,26% of all branches          (83,33%)
+
+     555,957381171 seconds time elapsed
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 4
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/hard/25mov.txt, Threads = 4
+
+
+SEED: 1466873446
+Achou solucao com 41 movimentos
+Thread 0 esperando
+Thread 1 esperando
+Thread 3 esperando
+Thread 2 esperando
+Final do Ciclo 0
+Thread 1 esperando
+Thread 2 esperando
+Thread 3 esperando
+Thread 0 esperando
+Final do Ciclo 1
+Thread 1 esperando
+Thread 0 esperando
+Thread 3 esperando
+Thread 2 esperando
+Final do Ciclo 2
+Thread 0 esperando
+Thread 1 esperando
+Thread 2 esperando
+Thread 3 esperando
+Final do Ciclo 3
+Thread 0 esperando
+Thread 1 esperando
+Thread 2 esperando
+Thread 3 esperando
+Final do Ciclo 4
+Achou solucao com 49 movimentos
+Thread 1 esperando
+Thread 0 esperando
+Thread 3 esperando
+Thread 2 esperando
+Final do Ciclo 5
+
+
+Resumo
+Formigas: 512
+Formigas por Thread: 128
+Ciclos: 6
+Solucao Encontrada: 41
+Tempo: 622s
+Nodes na Arvore: 2925920
+
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 4':
+
+     631145,650147      task-clock (msec)         #    1,015 CPUs utilized          
+         1.400.068      context-switches          #    0,002 M/sec                  
+            22.225      cpu-migrations            #    0,035 K/sec                  
+           152.258      page-faults               #    0,241 K/sec                  
+ 1.698.532.994.298      cycles                    #    2,691 GHz                      (83,33%)
+ 1.671.076.800.885      stalled-cycles-frontend   #   98,38% frontend cycles idle     (83,36%)
+ 1.571.813.349.871      stalled-cycles-backend    #   92,54% backend  cycles idle     (66,69%)
+    60.627.737.068      instructions              #    0,04  insns per cycle        
+                                                  #   27,56  stalled cycles per insn  (83,39%)
+    16.793.102.329      branches                  #   26,607 M/sec                    (83,31%)
+       783.580.712      branch-misses             #    4,67% of all branches          (83,31%)
+
+     622,091958852 seconds time elapsed
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/src$ perf stat ./a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 8
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 512, Ciclos = 6, Arquivo = entradas/hard/25mov.txt, Threads = 8
+
+
+SEED: 1466872156
+Thread 3 esperando
+Thread 0 esperando
+Thread 6 esperando
+Thread 2 esperando
+Thread 7 esperando
+Thread 4 esperando
+Thread 1 esperando
+Thread 5 esperando
+Final do Ciclo 0
+Thread 1 esperando
+Thread 3 esperando
+Thread 7 esperando
+Thread 6 esperando
+Thread 2 esperando
+Thread 5 esperando
+Thread 4 esperando
+Thread 0 esperando
+Final do Ciclo 1
+Thread 3 esperando
+Thread 1 esperando
+Thread 6 esperando
+Thread 5 esperando
+Thread 4 esperando
+Thread 0 esperando
+Thread 2 esperando
+Thread 7 esperando
+Final do Ciclo 2
+Thread 0 esperando
+Thread 5 esperando
+Thread 7 esperando
+Thread 2 esperando
+Thread 4 esperando
+Thread 1 esperando
+Thread 3 esperando
+Thread 6 esperando
+Final do Ciclo 3
+Thread 3 esperando
+Thread 5 esperando
+Thread 6 esperando
+Thread 7 esperando
+Thread 2 esperando
+Thread 0 esperando
+Thread 4 esperando
+Thread 1 esperando
+Final do Ciclo 4
+Thread 2 esperando
+Achou solucao com 37 movimentos
+Thread 6 esperando
+Thread 7 esperando
+Thread 5 esperando
+Thread 0 esperando
+Thread 4 esperando
+Thread 3 esperando
+Thread 1 esperando
+Final do Ciclo 5
+
+
+Resumo
+Formigas: 512
+Formigas por Thread: 64
+Ciclos: 6
+Solucao Encontrada: 37
+Tempo: 615s
+Nodes na Arvore: 2907309
+
+ Performance counter stats for './a.out -a 0.1 -r 0.5 -b 1 -f entradas/hard/25mov.txt -c 6 -n 512 -t 8':
+
+     625411,376630      task-clock (msec)         #    1,016 CPUs utilized          
+         1.388.163      context-switches          #    0,002 M/sec                  
+            44.856      cpu-migrations            #    0,072 K/sec                  
+           151.330      page-faults               #    0,242 K/sec                  
+ 1.701.735.174.150      cycles                    #    2,721 GHz                      (83,30%)
+ 1.675.313.327.794      stalled-cycles-frontend   #   98,45% frontend cycles idle     (83,31%)
+ 1.574.446.756.915      stalled-cycles-backend    #   92,52% backend  cycles idle     (66,74%)
+    60.100.955.292      instructions              #    0,04  insns per cycle        
+                                                  #   27,87  stalled cycles per insn  (83,38%)
+    16.613.936.408      branches                  #   26,565 M/sec                    (83,33%)
+       773.646.976      branch-misses             #    4,66% of all branches          (83,33%)
+
+     615,577370192 seconds time elapsed
