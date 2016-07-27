@@ -11,7 +11,7 @@
 #include "includes/estruturas.h"
 #include "includes/heuristica.h"
 
-#define ALTURA_ARVORE_MAX 500
+#define ALTURA_ARVORE_MAX 25
 #define MAX_BUCKETS_ARVORE 64000
 #define MAX_BUCKETS_CAMINHO 128
 
@@ -72,7 +72,10 @@ void inicializaFilho(node *filho){
 	filho->filhos = NULL;
 }
 
+int nivelAtualArvore = 0;
 void geraNode(node *nodeOrigem) {
+	if (nivelAtualArvore >= ALTURA_ARVORE_MAX) return;
+	nivelAtualArvore++;
 	par zeroPos;
 	zeroPos = achaPosicaoZero(nodeOrigem->matriz);	
 	int qtaFilhos = 0;
@@ -93,8 +96,7 @@ void geraNode(node *nodeOrigem) {
 			inicializaFilho(filhoEsquerda);
 			insereListaLigada(filhoEsquerda, &nodeOrigem->filhos);
 			insereHash(filhoEsquerda, &nodesInseridosArvore);
-		} else {
-			insereListaLigada(ptNode, &nodeOrigem->filhos);
+			geraNode(filhoEsquerda);
 		}
 	}
 	// vizinho na coluna da direita
@@ -112,8 +114,7 @@ void geraNode(node *nodeOrigem) {
 			inicializaFilho(filhoDireita);
 			insereListaLigada(filhoDireita, &nodeOrigem->filhos);
 			insereHash(filhoDireita, &nodesInseridosArvore);
-		} else {
-			insereListaLigada(ptNode, &nodeOrigem->filhos);
+			geraNode(filhoDireita);
 		}
 	}
 	// vizinho na linha de cima
@@ -131,8 +132,7 @@ void geraNode(node *nodeOrigem) {
 			inicializaFilho(filhoCima);
 			insereListaLigada(filhoCima, &nodeOrigem->filhos);
 			insereHash(filhoCima, &nodesInseridosArvore);
-		} else {
-			insereListaLigada(ptNode, &nodeOrigem->filhos);
+			geraNode(filhoCima);
 		}
 	}
 	// vizinho na linha de baixo
@@ -150,10 +150,10 @@ void geraNode(node *nodeOrigem) {
 			inicializaFilho(filhoBaixo);
 			insereListaLigada(filhoBaixo, &nodeOrigem->filhos);
 			insereHash(filhoBaixo, &nodesInseridosArvore);
-		} else {
-			insereListaLigada(ptNode, &nodeOrigem->filhos);
+			geraNode(filhoBaixo);
 		}
 	}
+	nivelAtualArvore--;
 	nodeOrigem->qtaFilhos = qtaFilhos;
 }
 
@@ -184,7 +184,6 @@ void adicionaNoCaminho(formiga *formiga, node *filho){
 	}
 }
 
-unsigned long long tempoEmGeraNode = 0;
 void geraSolucao(formiga *formiga, node *raiz) {
 	int estagnou = 0;
 	int movAnterior = -1;
@@ -192,9 +191,8 @@ void geraSolucao(formiga *formiga, node *raiz) {
   	
   	while (!matrizIgual(matrizResposta, formiga->caminho.todos->nodeAtual->matriz)){
 		if (formiga->caminho.todos->nodeAtual->filhos == NULL){
-			tempoAntes = time(NULL);
-			geraNode(formiga->caminho.todos->nodeAtual);
-			tempoEmGeraNode += (time(NULL) - tempoAntes);	
+			//geraNode(formiga->caminho.todos->nodeAtual);
+			printf("Sem filhos\n");
 		}
 
 		if (todosNoCaminho(formiga)){
@@ -251,7 +249,6 @@ void *antsystem(){
 	formiga formigas[qtaFormigas];
 
 	int i;
-	inicializaArvore(&raizArvore);
 	int melhorMovimentos = INT_MAX;
 
 	while (contadorCiclos != maxCiclos){    
@@ -274,16 +271,21 @@ void *antsystem(){
 	return NULL;
 }
 
+void geraArvore() {
+	inicializaArvore(&raizArvore);
+
+	geraNode(&raizArvore);
+}
+
 void imprimeUsage(){
     printf("Help\n\n");
-    printf("Uso: ./a.out <parametro> <valor>\n\n");
+    printf("Uso: ./seq <parametro> <valor>\n\n");
     printf("  -a <alfa>          peso dado ao feromonio\n");
     printf("  -b <beta>          peso dado a heuristica\n");
     printf("  -r <rho>           taxa de evaporacao do feromonio\n");
     printf("  -n <n_formigas>    numero de formigas\n");
     printf("  -f <arquivo>       caminho para o arquivo de entrada\n");
     printf("  -c <ciclos>        numero de ciclos\n");
-    printf("  -t <threads>       numero de threads\n\n");
     printf("  -s <seed>          seed para o random\n\n");
 }
 
@@ -332,6 +334,10 @@ int main(int argc, char **argv){
  	unsigned long long tempoExecucao = time(NULL);
 	inicializaRandom(seed);
 
+	printf("Gerando Arvore...\n");
+	geraArvore();
+	printf("Arvore gerada, começando antsystem\n");
+	//return 0;
 	antsystem();
 
 	printf("\n\nResumo\n");
@@ -343,6 +349,5 @@ int main(int argc, char **argv){
 	else
 		printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
 	printf("Tempo: %llus\n", (time(NULL) - tempoExecucao));	
-	printf("Tempo em GeraNode: %llus\n", (tempoEmGeraNode));	
 	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
 }
