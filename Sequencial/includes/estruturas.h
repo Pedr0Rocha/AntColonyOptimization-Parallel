@@ -42,6 +42,8 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 void imprimeMatriz(int matriz[4][4]);
 void cloneArray(int matriz[4][4], int clone[4][4]);
 void insereListaLigada(node *node, listaLigada **lista);
+void removeListaLigada(node *node, listaLigada **lista);
+int queueVazio(listaLigada *lista);
 node* getFilho(int i, listaLigada *filhos);
 node* getNoCaminhoExiste(int matriz[4][4], hashmap *hash);
 int todosNoCaminho(formiga *formiga);

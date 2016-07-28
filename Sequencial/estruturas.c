@@ -33,6 +33,39 @@ void insereListaLigada(node *node, listaLigada **lista) {
 	}
 }
 
+int queueVazio(listaLigada *lista) {
+	int count = 0;
+	while (lista != NULL) {
+		count++;
+		lista = lista->prev;
+	}
+	if (count == 0) return 1;
+	else return 0;
+}
+
+void removeListaLigada(node *nodeRem, listaLigada **lista) {
+	if (matrizIgual(nodeRem->matriz, (**lista).nodeAtual->matriz)) {
+		node *temp = *lista;
+		*lista = (**lista).prev;
+		free(temp);
+		return;
+	}
+
+	node *atual = (**lista)->prev;
+	node *prev = *lista;
+	while (atual != NULL && prev != NULL) {
+		if (matrizIgual(nodeRem->matriz, atual->matriz)) {
+			node *temp = atual;
+			prev->prev = atual->prev;
+			free(temp);
+			return;
+		}
+		prev = atual;	
+		atual = prev->prev;
+	}
+    return;
+}
+
 node* getFilho(int index, listaLigada *filhos){
 	if (index == 0) return filhos->nodeAtual;
 	else {
