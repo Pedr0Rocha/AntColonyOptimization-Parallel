@@ -24,6 +24,7 @@ void insereListaLigada(node *node, listaLigada **lista) {
 		*lista = malloc(sizeof(listaLigada)); 
 		(**lista).nodeAtual = node;
 		(**lista).prev = NULL;
+		(**lista).prox = NULL;
 		(**lista).head = node;
 	} else {
 		listaLigada *nova;
@@ -39,16 +40,29 @@ int queueVazio(listaLigada *lista) {
 	else return 0;
 }
 
+int contaElementosQueue(listaLigada *lista) {
+	listaLigada *iterator = lista;
+	int contador = 0;
+	while (iterator != NULL) {
+		contador++;
+		iterator = iterator->prev;
+	}
+	return contador;
+}
+
 node *removeListaLigada(listaLigada **lista) {    
-	node *removido = (**lista).head;
+	node *removido;
 	listaLigada *iterator = *lista;
 
 	if (iterator->prev) {
 		while (iterator->prev->prev != NULL) 
 			iterator = iterator->prev;
+		removido = iterator->prev->nodeAtual;
+		iterator->prev = NULL;
+	} else {
+		removido = iterator->nodeAtual;
+		*lista = NULL;
 	}
-	(**lista).head = iterator->nodeAtual;
-	if ( (**lista).head == NULL) printf("Head é NULL\n");
 	return removido;
 }
 

@@ -13,7 +13,7 @@
 #include "includes/heuristica.h"
 
 #define ALTURA_ARVORE_MAX 23
-#define NODE_ARVORE_MAX 1000
+#define NODE_ARVORE_MAX 1000000
 #define MAX_BUCKETS_ARVORE 64000
 #define MAX_BUCKETS_CAMINHO 128
 
@@ -122,7 +122,7 @@ void geraNode(node *nodeOrigem) {
 		matrizTemp[zeroPos.x][zeroPos.y - 1] = 0;
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))) {
-			node *filhoEsquerda = criaFilho(nodeOrigem, 'e');
+			criaFilho(nodeOrigem, 'e');
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -135,7 +135,7 @@ void geraNode(node *nodeOrigem) {
 		matrizTemp[zeroPos.x][zeroPos.y + 1] = 0;
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))){
-			node *filhoDireita = criaFilho(nodeOrigem, 'd');
+			criaFilho(nodeOrigem, 'd');
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -148,7 +148,7 @@ void geraNode(node *nodeOrigem) {
 		matrizTemp[zeroPos.x - 1][zeroPos.y] = 0;
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))){
-			node *filhoCima = criaFilho(nodeOrigem, 'c');
+			criaFilho(nodeOrigem, 'c');
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -161,12 +161,12 @@ void geraNode(node *nodeOrigem) {
 		matrizTemp[zeroPos.x + 1][zeroPos.y] = 0;
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))) {
-			node *filhoBaixo = criaFilho(nodeOrigem, 'b');
+			criaFilho(nodeOrigem, 'b');
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
 	}
-	if (matrizIgual(matrizResposta, nodeOrigem->matriz))
+	if (matrizIgual(matrizResposta, nodeOrigem->matriz)) 
 		solucaoNaArvore = 1;
 
 	nodeOrigem->qtaFilhos = qtaFilhos;
@@ -200,70 +200,35 @@ void adicionaNoCaminho(formiga *formiga, node *filho){
 }
 
 void geraSolucao(formiga *formiga, node *raiz) {
-	//int estagnou = 0;
-	//int movAnterior = -1;
+	int estagnou = 0;
+	int movAnterior = -1;
   	
-	node *f = raiz;
-  	while (!matrizIgual(matrizResposta, f->matriz)){
-		if (f->filhos == NULL){
-			//geraNode(formiga->caminho.todos->nodeAtual);
-			//printf("Sem filhos\n");
+  	while (!matrizIgual(matrizResposta, formiga->caminho.todos->nodeAtual->matriz)){
+		if (todosNoCaminho(formiga)){
+			formiga->resolvido = 0;
 			break;
 		}
-
-		// if (todosNoCaminho(formiga)){
-		// 	formiga->resolvido = 0;
-		// 	break;
-		// }
-		// fflush(stdin);
-		// printf("Para qual filho deseja ir? (e1/d2/c3/b4), qta filhos = %d\n", f->qtaFilhos);
-		// imprimeMatriz(f->matriz);
-		// listaLigada *l = f->filhos;
-		// printf("\nFILHOS\n");
-		// while (l != NULL) {
-		// 	imprimeMatriz(l->nodeAtual->matriz);
-		// 	printf("\n");
-		// 	l = l->prev;
-		// }
-		// int resp;
-		// scanf("%d", &resp);
-		// printf("p -> %p\n", f);
-		// switch (resp) {
-		// 	case 1:
-		// 		f = getFilho(0, f->filhos);
-		// 		break;
-		// 	case 2:
-		// 		f = getFilho(1, f->filhos);
-		// 		break;
-		// 	case 3:
-		// 		f = getFilho(2, f->filhos);
-		// 		break;
-		// 	case 4:
-		// 		f = getFilho(3, f->filhos);
-		// 		break;
-		// }
-		// printf("p -> %p\n", f);
 		node *filho = escolheFilho(formiga->caminho.todos->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
 
-		// if (formiga->movimentos >= ALTURA_ARVORE_MAX) {
-		// 	formiga->resolvido = 0;
-		// 	break;
-		// }
-		// if (movAnterior == formiga->movimentos)
-		// 	estagnou++;
-		// else 
-		// 	estagnou = 0;
+		if (formiga->movimentos >= ALTURA_ARVORE_MAX) {
+			formiga->resolvido = 0;
+			break;
+		}
+		if (movAnterior == formiga->movimentos)
+			estagnou++;
+		else 
+			estagnou = 0;
 
-		// if (estagnou > 100000){
-		// 	formiga->resolvido = 0;
-		// 	printf("Starvation.\n");
-		// 	break;
-		// }
-		// movAnterior = formiga->movimentos;
+		if (estagnou > 100000){
+			formiga->resolvido = 0;
+			printf("Starvation.\n");
+			break;
+		}
+		movAnterior = formiga->movimentos;
 	}
-	if (formiga->resolvido)
-		printf("Achou solucao com %d movimentos\n", formiga->movimentos);
+	//if (formiga->resolvido)
+	//	printf("Achou solucao com %d movimentos\n", formiga->movimentos);
 }
 
 void freeFormigas(formiga formigas[]) {
@@ -320,17 +285,14 @@ void geraArvore() {
 
 	node *atual = &raizArvore;
 	insereListaLigada(atual, &queue);
-	while (!queueVazio(queue)) {
+	while (queue) {
 		atual = removeListaLigada(&queue);
-		printf("Removido \\/ \n");
-		imprimeMatriz(atual->matriz);
-		//if (getNoCaminhoExiste(atual->matriz, &nodesInseridosArvore)) 
 		geraNode(atual);
-		if (nodesInseridosArvore.qtaNodes >= NODE_ARVORE_MAX || solucaoNaArvore) {
-			printf("Max numero de nodes ou solucao na arvore atingido\n");
+		if (nodesInseridosArvore.qtaNodes >= NODE_ARVORE_MAX || solucaoNaArvore)
 			break;
-		}
 	}
+	if (solucaoNaArvore)
+		printf("Solucao na arvore\n");
 }
 
 void imprimeUsage(){
@@ -387,13 +349,18 @@ int main(int argc, char **argv){
 	printf("\n\n");
 	if (seed == 0)
 		seed = time(NULL);
- 	unsigned long long tempoExecucao = time(NULL);
+ 	unsigned long long tempoExecucaoTotal = time(NULL);
 	inicializaRandom(seed);
 
 	printf("Gerando Arvore...\n");
 	geraArvore();
 	printf("Arvore gerada, começando antsystem\n");
-	//antsystem();
+
+ 	unsigned long long tempoExecucaoAlgoritmo = time(NULL);
+	if (solucaoNaArvore) 
+		antsystem();
+	else
+		printf("E necessario gerar mais possibilidades para encontrar a solucao\n");
 
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", qtaFormigas);
@@ -402,6 +369,7 @@ int main(int argc, char **argv){
 		printf("Solucao Encontrada: Nenhuma\n");
 	else
 		printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
-	printf("Tempo: %llus\n", (time(NULL) - tempoExecucao));	
+	printf("Tempo Total: %llus\n", (time(NULL) - tempoExecucaoTotal));	
+	printf("Tempo Ant System: %llus\n", (time(NULL) - tempoExecucaoAlgoritmo));	
 	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
 }

@@ -18,6 +18,7 @@ struct node {
 struct listaLigada {
 	node *nodeAtual;
 	listaLigada *prev;
+	listaLigada *prox;
 	node *head;
 };
 struct hashmap {
@@ -45,6 +46,7 @@ void cloneArray(int matriz[4][4], int clone[4][4]);
 void insereListaLigada(node *node, listaLigada **lista);
 node* removeListaLigada(listaLigada **lista);
 int queueVazio(listaLigada *lista);
+int contaElementosQueue(listaLigada *lista);
 node* getFilho(int i, listaLigada *filhos);
 node* getNoCaminhoExiste(int matriz[4][4], hashmap *hash);
 int todosNoCaminho(formiga *formiga);

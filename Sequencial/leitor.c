@@ -14,6 +14,6 @@ void leEntrada(char *caminho, int matriz[4][4]){
 			for (j = 0; j < 4; j++)
 				bytes = fscanf(fp, "%d", &matriz[i][j]);
 	} else {
-		printf("Erro ao ler arquivo de entrada. Bytes = %d", bytes);
+		printf("\nErro ao ler arquivo de entrada. Bytes lidos = %d\n", bytes);
 	}
 }
