@@ -13,7 +13,7 @@
 #include "includes/heuristica.h"
 
 #define ALTURA_ARVORE_MAX 23
-#define NODE_ARVORE_MAX 3000000
+#define NODE_ARVORE_MAX 1000
 #define MAX_BUCKETS_ARVORE 64000
 #define MAX_BUCKETS_CAMINHO 128
 
@@ -28,6 +28,7 @@ int matrizResposta[4][4] = {
 listaLigada *queue;
 node raizArvore;
 hashmap nodesInseridosArvore;
+int solucaoNaArvore = 0;
 
 int heuristicaUsada = 0;
 double alfa = 0.1;
@@ -102,11 +103,11 @@ node* criaFilho(node *nodePai, char direcao) {
 	}
 	inicializaFilho(filho);
 	insereListaLigada(filho, &nodePai->filhos);
+	insereListaLigada(filho, &queue);
 	insereHash(filho, &nodesInseridosArvore);
 	return filho;
 }
 
-int solucaoNaArvore = 0;
 void geraNode(node *nodeOrigem) {
 	par zeroPos;
 	zeroPos = achaPosicaoZero(nodeOrigem->matriz);	
@@ -122,7 +123,6 @@ void geraNode(node *nodeOrigem) {
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))) {
 			node *filhoEsquerda = criaFilho(nodeOrigem, 'e');
-			insereListaLigada(filhoEsquerda, &queue);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -136,7 +136,6 @@ void geraNode(node *nodeOrigem) {
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))){
 			node *filhoDireita = criaFilho(nodeOrigem, 'd');
-			insereListaLigada(filhoDireita, &queue);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -150,7 +149,6 @@ void geraNode(node *nodeOrigem) {
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))){
 			node *filhoCima = criaFilho(nodeOrigem, 'c');
-			insereListaLigada(filhoCima, &queue);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -164,7 +162,6 @@ void geraNode(node *nodeOrigem) {
 		qtaFilhos++;
 		if (!(ptNode = getNoCaminhoExiste(matrizTemp, &nodesInseridosArvore))) {
 			node *filhoBaixo = criaFilho(nodeOrigem, 'b');
-			insereListaLigada(filhoBaixo, &queue);
 		} else {
 			insereListaLigada(ptNode, &nodeOrigem->filhos);
 		}
@@ -324,13 +321,15 @@ void geraArvore() {
 	node *atual = &raizArvore;
 	insereListaLigada(atual, &queue);
 	while (!queueVazio(queue)) {
-		if (!getNoCaminhoExiste(atual->matriz, &nodesInseridosArvore)) {
-			geraNode(atual);
-			removeListaLigada(atual, &queue);
-			atual = queue->nodeAtual;
-		}
-		if (nodesInseridosArvore.qtaNodes >= NODE_ARVORE_MAX || solucaoNaArvore)
+		atual = removeListaLigada(&queue);
+		printf("Removido \\/ \n");
+		imprimeMatriz(atual->matriz);
+		//if (getNoCaminhoExiste(atual->matriz, &nodesInseridosArvore)) 
+		geraNode(atual);
+		if (nodesInseridosArvore.qtaNodes >= NODE_ARVORE_MAX || solucaoNaArvore) {
+			printf("Max numero de nodes ou solucao na arvore atingido\n");
 			break;
+		}
 	}
 }
 

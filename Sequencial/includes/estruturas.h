@@ -18,6 +18,7 @@ struct node {
 struct listaLigada {
 	node *nodeAtual;
 	listaLigada *prev;
+	node *head;
 };
 struct hashmap {
 	listaLigada **buckets;
@@ -42,7 +43,7 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 void imprimeMatriz(int matriz[4][4]);
 void cloneArray(int matriz[4][4], int clone[4][4]);
 void insereListaLigada(node *node, listaLigada **lista);
-void removeListaLigada(node *node, listaLigada **lista);
+node* removeListaLigada(listaLigada **lista);
 int queueVazio(listaLigada *lista);
 node* getFilho(int i, listaLigada *filhos);
 node* getNoCaminhoExiste(int matriz[4][4], hashmap *hash);
