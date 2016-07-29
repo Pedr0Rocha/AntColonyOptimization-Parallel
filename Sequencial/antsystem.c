@@ -12,7 +12,6 @@
 #include "includes/estruturas.h"
 #include "includes/heuristica.h"
 
-#define ALTURA_ARVORE_MAX 23
 #define NODE_ARVORE_MAX 3000000
 #define MAX_BUCKETS_ARVORE 64000
 #define MAX_BUCKETS_CAMINHO 128
@@ -202,10 +201,7 @@ void adicionaNoCaminho(formiga *formiga, node *filho){
 	}
 }
 
-void geraSolucao(formiga *formiga, node *raiz) {
-	int estagnou = 0;
-	int movAnterior = -1;
-  	
+void geraSolucao(formiga *formiga, node *raiz) {  	
   	while (!matrizIgual(matrizResposta, formiga->caminho.todos->nodeAtual->matriz)){
 		if (todosNoCaminho(formiga)){
 			formiga->resolvido = 0;
@@ -213,22 +209,6 @@ void geraSolucao(formiga *formiga, node *raiz) {
 		}
 		node *filho = escolheFilho(formiga->caminho.todos->nodeAtual);
 		adicionaNoCaminho(formiga, filho);
-
-		if (formiga->movimentos >= ALTURA_ARVORE_MAX) {
-			formiga->resolvido = 0;
-			break;
-		}
-		if (movAnterior == formiga->movimentos)
-			estagnou++;
-		else 
-			estagnou = 0;
-
-		if (estagnou > 100000){
-			formiga->resolvido = 0;
-			printf("Starvation.\n");
-			break;
-		}
-		movAnterior = formiga->movimentos;
 	}
 	//if (formiga->resolvido)
 	//	printf("Achou solucao com %d movimentos\n", formiga->movimentos);
@@ -274,7 +254,7 @@ void *antsystem(){
 					melhorMovimentos = formigas[i].movimentos;
 			atualizaFeromonioCaminho(&formigas[i]);
 		}	
-		printf("Final do Ciclo %d\n", contadorCiclos);
+		//printf("Final do Ciclo %d\n", contadorCiclos);
 		contadorCiclos++;
 		atualizaFeromonioGlobal();	
 		freeFormigas(formigas);    
@@ -372,7 +352,8 @@ int main(int argc, char **argv){
 		printf("Solucao Encontrada: Nenhuma\n");
 	else
 		printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
-	printf("Tempo Total: %llus\n", (time(NULL) - tempoExecucaoTotal));	
+	printf("Tempo Gerando Arvore: %llus\n", (tempoExecucaoAlgoritmo - tempoExecucaoTotal));
 	printf("Tempo Ant System: %llus\n", (time(NULL) - tempoExecucaoAlgoritmo));	
+	printf("Tempo Total: %llus\n", (time(NULL) - tempoExecucaoTotal));	
 	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
 }

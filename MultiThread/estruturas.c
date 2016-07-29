@@ -19,18 +19,46 @@ int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 	return 1;
 }
 
-void insereListaLigada(node *node, listaLigada **lista) {
+listaLigada* insereListaLigada(node *node, listaLigada **lista) {
 	if (*lista == NULL){
 		*lista = malloc(sizeof(listaLigada)); 
 		(**lista).nodeAtual = node;
 		(**lista).prev = NULL;
+		(**lista).prox = NULL;
+		return *lista;
 	} else {
 		listaLigada *nova;
 		nova = malloc(sizeof(listaLigada));
 		nova->nodeAtual = node;
+		nova->prox = NULL;
+		(*lista)->prox = nova;
 		nova->prev = *lista;
 		*lista = nova;
+		return NULL;
 	}
+}
+
+int contaElementosQueue(listaLigada *lista) {
+	listaLigada *iterator = lista;
+	int contador = 0;
+	while (iterator != NULL) {
+		contador++;
+		iterator = iterator->prev;
+	}
+	return contador;
+}
+
+node* removeListaLigada(listaLigada **head, listaLigada **lista) {    
+	node *removido = (*head)->nodeAtual;
+
+	if ((*head)->prox) {
+		(*head) = (*head)->prox;
+		(*head)->prev = NULL;
+	} else { 
+		*lista = NULL;
+		*head = NULL;
+	}
+	return removido;
 }
 
 node* getFilho(int index, listaLigada *filhos){

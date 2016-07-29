@@ -1,6 +1,6 @@
 ALL:
-	gcc *.c -Wall -ggdb -lm -O3 -lpthread
+	gcc *.c -o mtr -Wall -ggdb -lm -O3 -lpthread
 clear:
-	rm a.out
+	rm mtr
 run:
-	./a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/18mov.txt -c 6 -t 1
+	./mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/med/14mov.txt -c 1000 -t 2
