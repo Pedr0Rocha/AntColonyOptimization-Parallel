@@ -1,5 +1,5 @@
 ALL:
-	gcc *.c -o seq -Wall -ggdb -lm -O0
+	gcc *.c -o seq -Wall -ggdb -lm -O3
 clear:
 	rm seq
 run:

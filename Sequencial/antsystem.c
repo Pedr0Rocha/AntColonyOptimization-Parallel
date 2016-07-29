@@ -13,7 +13,7 @@
 #include "includes/heuristica.h"
 
 #define ALTURA_ARVORE_MAX 23
-#define NODE_ARVORE_MAX 1000000
+#define NODE_ARVORE_MAX 3000000
 #define MAX_BUCKETS_ARVORE 64000
 #define MAX_BUCKETS_CAMINHO 128
 
@@ -26,6 +26,7 @@ int matrizResposta[4][4] = {
 };
 
 listaLigada *queue;
+listaLigada *queueHead;
 node raizArvore;
 hashmap nodesInseridosArvore;
 int solucaoNaArvore = 0;
@@ -103,7 +104,9 @@ node* criaFilho(node *nodePai, char direcao) {
 	}
 	inicializaFilho(filho);
 	insereListaLigada(filho, &nodePai->filhos);
-	insereListaLigada(filho, &queue);
+	listaLigada *newHead = insereListaLigada(filho, &queue);
+	if (newHead)
+		queueHead = newHead;
 	insereHash(filho, &nodesInseridosArvore);
 	return filho;
 }
@@ -284,9 +287,9 @@ void geraArvore() {
 	inicializaArvore(&raizArvore);
 
 	node *atual = &raizArvore;
-	insereListaLigada(atual, &queue);
-	while (queue) {
-		atual = removeListaLigada(&queue);
+	queueHead = insereListaLigada(atual, &queue);
+	while (queueHead) {
+		atual = removeListaLigada(&queueHead, &queue);
 		geraNode(atual);
 		if (nodesInseridosArvore.qtaNodes >= NODE_ARVORE_MAX || solucaoNaArvore)
 			break;
