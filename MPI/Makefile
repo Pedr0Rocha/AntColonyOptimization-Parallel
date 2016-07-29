@@ -1,6 +1,6 @@
 ALL:
-	mpicc *.c -lm -lpthread -O3 -ggdb -o a.out
+	gcc *.c -o mpi -Wall -ggdb -lm -O3 -lpthread
 clear:
-	rm a.out
+	rm mpi
 run:
-	mpirun -n 2 ./a.out -a 0.1 -b 1 -r 0.5 -n 512 -f entradas/med/18mov.txt -c 6 -t 1
+	./mpi -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/med/14mov.txt -c 1000 -t 2

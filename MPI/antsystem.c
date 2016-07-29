@@ -7,10 +7,10 @@
 #include <getopt.h>
 #include <pthread.h>
 #include <ctype.h>
-#include "leitor.h"
-#include "utils.h"
-#include "estruturas.h"
-#include "heuristica.h"
+#include "includes/leitor.h"
+#include "includes/utils.h"
+#include "includes/estruturas.h"
+#include "includes/heuristica.h"
 
 #define NODE_ARVORE_MAX 3000000
 #define MAX_BUCKETS_ARVORE 64000
