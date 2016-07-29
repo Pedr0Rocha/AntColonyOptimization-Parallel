@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include "utils.h"
-#include "estruturas.h"
+#include "includes/utils.h"
+#include "includes/estruturas.h"
 
 void inicializaRandom(unsigned long long seed){
 	printf("SEED: %llu\n", seed);
