@@ -267,7 +267,11 @@ void *antsystem(int rank, int totalRanks){
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 
-		printf("Melhor Local antes de comunicação: %d\n", melhorLocal);
+		if (rank == MASTER)
+			printf("MASTER Melhor Local ANTES de comunicação: %d\n", melhorLocal);
+		else
+			printf("PROC %d - Melhor Local ANTES de comunicação: %d\n", rank, melhorLocal);
+
 		if (rank != MASTER) {
 			printf("PROC %d - Enviando %d movimentos\n", rank, melhorLocal);
     		MPI_Send(&melhorLocal, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
@@ -292,6 +296,11 @@ void *antsystem(int rank, int totalRanks){
     		MPI_Recv(&tempMelhor, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     		printf("PROC %d - Melhor local %d recebido de MASTER\n", rank, melhorLocal);
     	}
+
+		if (rank == MASTER)
+			printf("MASTER Melhor Local DEPOIS de comunicação: %d\n", melhorLocal);
+		else
+			printf("PROC %d - Melhor Local DEPOIS de comunicação: %d\n", rank, melhorLocal);
 
 		for (int i = inicioArray; i < finalArray; i++)
 			atualizaFeromonioCaminho(&formigas[i]);
@@ -406,19 +415,20 @@ int main(int argc, char **argv){
  
  	antsystem(rank, totalRanks);
 
-	printf("\n\nResumo\n");
-	printf("Formigas: %d\n", qtaFormigas);
-	printf("Formigas por Processo: %d\n", qtaFormigas/nProcessos);
-	printf("Ciclos: %d\n", maxCiclos);
-	if (globalMelhorMovimentos == INT_MAX)
-		printf("Solucao Encontrada: Nenhuma\n");
-	else
-		printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
-	printf("Tempo Gerando Arvore: %llus\n", (tempoExecucaoAlgoritmo - tempoExecucaoTotal));
-	printf("Tempo Ant System: %llus\n", (time(NULL) - tempoExecucaoAlgoritmo));	
-	printf("Tempo Total: %llus\n", (time(NULL) - tempoExecucaoTotal));
-	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
-
+ 	if (rank == MASTER) {
+		printf("\n\nResumo\n");
+		printf("Formigas: %d\n", qtaFormigas);
+		printf("Formigas por Processo: %d\n", qtaFormigas/nProcessos);
+		printf("Ciclos: %d\n", maxCiclos);
+		if (globalMelhorMovimentos == INT_MAX)
+			printf("Solucao Encontrada: Nenhuma\n");
+		else
+			printf("Solucao Encontrada: %d\n", globalMelhorMovimentos);
+		printf("Tempo Gerando Arvore: %llus\n", (tempoExecucaoAlgoritmo - tempoExecucaoTotal));
+		printf("Tempo Ant System: %llus\n", (time(NULL) - tempoExecucaoAlgoritmo));	
+		printf("Tempo Total: %llus\n", (time(NULL) - tempoExecucaoTotal));
+		printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
+	}
 	printf("PROC %d - TERMINOU\n", rank);
 	MPI_Finalize();
 }
