@@ -3,4 +3,4 @@ ALL:
 clear:
 	rm mtr
 run:
-	./mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/med/14mov.txt -c 1000 -t 2
+	./mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/14mov.txt -c 1000 -t 2

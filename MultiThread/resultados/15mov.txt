@@ -1,0 +1,14 @@
+TEMPO REAL - SEQUENCIAL
+57 segundos
+
+TEMPO 2 THREADS
+37 segundos
+Speedup - 1.5405405405405406
+
+TEMPO 4 THREADS
+28 segundos
+Speedup - 2.0357142857142856
+
+TEMPO 8 THREADS
+24 segundos
+Speedup - 2.375

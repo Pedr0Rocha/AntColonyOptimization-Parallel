@@ -1,0 +1,119 @@
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/MultiThread$ perf stat ./mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000 -t 8
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 1000, Ciclos = 1000, Arquivo = entradas/15mov.txt, Threads = 8
+
+
+SEED: 1469901936
+Gerando Arvore...
+Solucao na arvore
+Arvore gerada, começando antsystem
+
+
+Resumo
+Formigas: 1000
+Formigas por Thread: 125
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 3s
+Tempo Ant System: 25s
+Tempo Total: 28s
+Nodes na Arvore: 238773
+
+ Performance counter stats for './mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000 -t 8':
+
+      99873,567423      task-clock (msec)         #    3,534 CPUs utilized          
+         2.087.154      context-switches          #    0,021 M/sec                  
+             6.516      cpu-migrations            #    0,065 K/sec                  
+            14.953      page-faults               #    0,150 K/sec                  
+   339.761.279.062      cycles                    #    3,402 GHz                      (83,19%)
+   276.249.611.675      stalled-cycles-frontend   #   81,31% frontend cycles idle     (83,26%)
+   192.009.022.149      stalled-cycles-backend    #   56,51% backend  cycles idle     (66,80%)
+   137.627.623.738      instructions              #    0,41  insns per cycle        
+                                                  #    2,01  stalled cycles per insn  (83,38%)
+    20.290.021.638      branches                  #  203,157 M/sec                    (83,38%)
+       367.759.040      branch-misses             #    1,81% of all branches          (83,38%)
+
+      28,264046421 seconds time elapsed
+
+
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/MultiThread$ perf stat ./mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000 -t 8
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 1000, Ciclos = 1000, Arquivo = entradas/15mov.txt, Threads = 8
+
+
+SEED: 1469901868
+Gerando Arvore...
+Solucao na arvore
+Arvore gerada, começando antsystem
+
+
+Resumo
+Formigas: 1000
+Formigas por Thread: 125
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 24s
+Tempo Total: 28s
+Nodes na Arvore: 238773
+
+ Performance counter stats for './mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000 -t 8':
+
+      99852,093293      task-clock (msec)         #    3,541 CPUs utilized          
+         2.059.553      context-switches          #    0,021 M/sec                  
+             6.061      cpu-migrations            #    0,061 K/sec                  
+            14.952      page-faults               #    0,150 K/sec                  
+   339.657.049.990      cycles                    #    3,402 GHz                      (83,38%)
+   276.279.041.892      stalled-cycles-frontend   #   81,34% frontend cycles idle     (83,31%)
+   192.501.810.926      stalled-cycles-backend    #   56,68% backend  cycles idle     (66,73%)
+   137.499.784.850      instructions              #    0,40  insns per cycle        
+                                                  #    2,01  stalled cycles per insn  (83,37%)
+    20.286.663.168      branches                  #  203,167 M/sec                    (83,21%)
+       367.055.089      branch-misses             #    1,81% of all branches          (83,37%)
+
+      28,198343150 seconds time elapsed
+
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/MultiThread$ perf stat ./mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000 -t 8
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 1000, Ciclos = 1000, Arquivo = entradas/15mov.txt, Threads = 8
+
+
+SEED: 1469901835
+Gerando Arvore...
+Solucao na arvore
+Arvore gerada, começando antsystem
+
+
+Resumo
+Formigas: 1000
+Formigas por Thread: 125
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 25s
+Tempo Total: 29s
+Nodes na Arvore: 238773
+
+ Performance counter stats for './mtr -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000 -t 8':
+
+     100639,093872      task-clock (msec)         #    3,445 CPUs utilized          
+         2.077.607      context-switches          #    0,021 M/sec                  
+            10.420      cpu-migrations            #    0,104 K/sec                  
+            14.956      page-faults               #    0,149 K/sec                  
+   342.253.069.376      cycles                    #    3,401 GHz                      (83,36%)
+   278.577.031.473      stalled-cycles-frontend   #   81,40% frontend cycles idle     (83,35%)
+   194.655.126.771      stalled-cycles-backend    #   56,87% backend  cycles idle     (66,76%)
+   137.222.882.018      instructions              #    0,40  insns per cycle        
+                                                  #    2,03  stalled cycles per insn  (83,36%)
+    20.206.487.064      branches                  #  200,782 M/sec                    (83,21%)
+       366.475.473      branch-misses             #    1,81% of all branches          (83,31%)
+
+      29,211426272 seconds time elapsed

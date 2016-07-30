@@ -1,0 +1,112 @@
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/Sequencial$ perf stat ./seq -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 1000, Ciclos = 1000, Arquivo = entradas/15mov.txt
+
+SEED: 1469901166
+Gerando Arvore...
+Solucao na arvore
+Arvore gerada, começando antsystem
+
+
+Resumo
+Formigas: 1000
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 56s
+Tempo Total: 60s
+Nodes na Arvore: 238773
+
+ Performance counter stats for './seq -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000':
+
+      60437,142179      task-clock (msec)         #    1,000 CPUs utilized          
+                78      context-switches          #    0,001 K/sec                  
+                 2      cpu-migrations            #    0,000 K/sec                  
+            14.908      page-faults               #    0,247 K/sec                  
+   223.859.280.974      cycles                    #    3,704 GHz                      (83,33%)
+   176.156.351.464      stalled-cycles-frontend   #   78,69% frontend cycles idle     (83,33%)
+   125.035.007.480      stalled-cycles-backend    #   55,85% backend  cycles idle     (66,67%)
+   107.104.489.527      instructions              #    0,48  insns per cycle        
+                                                  #    1,64  stalled cycles per insn  (83,33%)
+    14.838.429.918      branches                  #  245,518 M/sec                    (83,33%)
+       180.863.541      branch-misses             #    1,22% of all branches          (83,34%)
+
+      60,433409847 seconds time elapsed
+
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/Sequencial$ perf stat ./seq -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 1000, Ciclos = 1000, Arquivo = entradas/15mov.txt
+
+SEED: 1469901242
+Gerando Arvore...
+Solucao na arvore
+Arvore gerada, começando antsystem
+
+
+Resumo
+Formigas: 1000
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 57s
+Tempo Total: 61s
+Nodes na Arvore: 238773
+
+ Performance counter stats for './seq -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000':
+
+      60704,539829      task-clock (msec)         #    1,000 CPUs utilized          
+               143      context-switches          #    0,002 K/sec                  
+                 1      cpu-migrations            #    0,000 K/sec                  
+            14.907      page-faults               #    0,246 K/sec                  
+   225.142.766.664      cycles                    #    3,709 GHz                      (83,34%)
+   177.400.275.603      stalled-cycles-frontend   #   78,79% frontend cycles idle     (83,34%)
+   126.718.791.567      stalled-cycles-backend    #   56,28% backend  cycles idle     (66,67%)
+   107.169.427.829      instructions              #    0,48  insns per cycle        
+                                                  #    1,66  stalled cycles per insn  (83,34%)
+    14.809.841.316      branches                  #  243,966 M/sec                    (83,34%)
+       176.605.829      branch-misses             #    1,19% of all branches          (83,33%)
+
+      60,706699784 seconds time elapsed
+
+==============================================================================================================================================
+==============================================================================================================================================
+
+pedro@pedro-desktop:~/Dev/UEM/ProgramacaoConcorrente/Sequencial$ perf stat ./seq -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000
+
+Alfa = 0.10, Beta = 1.00, Rho = 0.50, Formigas = 1000, Ciclos = 1000, Arquivo = entradas/15mov.txt
+
+SEED: 1469901321
+Gerando Arvore...
+Solucao na arvore
+Arvore gerada, começando antsystem
+
+
+Resumo
+Formigas: 1000
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 58s
+Tempo Total: 62s
+Nodes na Arvore: 238773
+
+ Performance counter stats for './seq -a 0.1 -b 1 -r 0.5 -n 1000 -f entradas/15mov.txt -c 1000':
+
+      62198,689047      task-clock (msec)         #    0,998 CPUs utilized          
+             3.323      context-switches          #    0,053 K/sec                  
+                 2      cpu-migrations            #    0,000 K/sec                  
+            14.907      page-faults               #    0,240 K/sec                  
+   228.828.428.423      cycles                    #    3,679 GHz                      (83,32%)
+   181.149.424.097      stalled-cycles-frontend   #   79,16% frontend cycles idle     (83,32%)
+   130.160.735.029      stalled-cycles-backend    #   56,88% backend  cycles idle     (66,69%)
+   107.047.703.378      instructions              #    0,47  insns per cycle        
+                                                  #    1,69  stalled cycles per insn  (83,35%)
+    14.825.720.631      branches                  #  238,361 M/sec                    (83,34%)
+       167.255.055      branch-misses             #    1,13% of all branches          (83,33%)
+
+      62,329559221 seconds time elapsed
+
