@@ -15,6 +15,7 @@
 #define NODE_ARVORE_MAX 3000000
 #define MAX_BUCKETS_ARVORE 64000
 #define MAX_BUCKETS_CAMINHO 128
+#define MASTER 0
 
 int matrizInicial[4][4];
 int matrizResposta[4][4] = {	  
@@ -217,9 +218,8 @@ void geraSolucao(formiga *formiga, node *raiz) {
 	//	printf("Achou solucao com %d movimentos\n", formiga->movimentos);
 }
 
-void freeFormigas(formiga formigas[]) {
-	int i, j;
-	for (i = 0; i < qtaFormigas/nProcessos; i++){
+void freeFormigas(int inicio, int fim, formiga formigas[]) {
+	for (int i = inicio; i < fim; i++){
 		listaLigada *atual = formigas[i].caminho.todos;
 		listaLigada *anterior;
 		while (atual != NULL){
@@ -227,7 +227,7 @@ void freeFormigas(formiga formigas[]) {
 			atual = atual->prev;
 			free(anterior);
 		}
-		for (j = 0; j < MAX_BUCKETS_CAMINHO; j++){
+		for (int j = 0; j < MAX_BUCKETS_CAMINHO; j++){
 			listaLigada *atual = formigas[i].caminho.buckets[j];
 			listaLigada *anterior;
 			while (atual != NULL){
@@ -240,46 +240,73 @@ void freeFormigas(formiga formigas[]) {
 	}	
 }
 
-void *antsystem(){
-	formiga formigas[qtaFormigas/nProcessos];
+void *antsystem(int rank, int totalRanks){
+	int inicioArray, finalArray;
+	int formigaPorProcesso = qtaFormigas/nProcessos;
+	inicioArray = rank * formigaPorProcesso;
+	finalArray = inicioArray + formigaPorProcesso;
 
-	int i;
-	long id;
-	id = 0;
+	formiga formigas[qtaFormigas];
+
 	int melhorLocal = INT_MAX;
+	formiga melhorFormiga;
+	int tempMelhor;
 
 	while (contadorCiclos != maxCiclos){    
-		for (i = 0; i < qtaFormigas/nProcessos; i++){
+		for (int i = inicioArray; i < finalArray; i++){
 			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i], &raizArvore);
 		}
-		for (i = 0; i < qtaFormigas/nProcessos; i++){
+		for (int i = inicioArray; i < finalArray; i++){
 			if (matrizIgual(formigas[i].caminho.todos->nodeAtual->matriz, matrizResposta)){
 				if (formigas[i].movimentos < melhorLocal){
 					melhorLocal = formigas[i].movimentos;
+					melhorFormiga = formigas[i];
 				}			
 			}
 		}
-		//printf("Thread %li esperando\n", id);
-		//pthread_barrier_wait(&barreira);
+		MPI_Barrier(MPI_COMM_WORLD);
 
-		for (i = 0; i < qtaFormigas/nProcessos; i++){
-			//pthread_mutex_lock(&lock);
+		printf("Melhor Local antes de comunicação: %d\n", melhorLocal);
+		if (rank != MASTER) {
+			printf("PROC %d - Enviando %d movimentos\n", rank, melhorLocal);
+    		MPI_Send(&melhorLocal, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+    		printf("PROC %d - Enviado\n", rank);
+		} else {
+    		/* Recebendo informacoes de todos os processos */
+    		for (int i = 1; i < nProcessos; i++) {
+    			printf("MASTER - Recebendo melhores locais\n");
+    			MPI_Recv(&tempMelhor, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    			if (tempMelhor < melhorLocal) {
+    				melhorLocal = tempMelhor;
+    				printf("MASTER - processo %d achou melhor\n", i);
+    			}
+    		}
+    		/* Comparando e enviando para todos os processo a melhor formiga */
+    		for (int i = 1; i < nProcessos; i++) {
+    			printf("MASTER - Enviando melhor formiga\n");
+    			MPI_Send(&melhorLocal, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+    		}
+    	}
+    	if (rank != MASTER) {
+    		MPI_Recv(&tempMelhor, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    		printf("PROC %d - Melhor local %d recebido de MASTER\n", rank, melhorLocal);
+    	}
+
+		for (int i = inicioArray; i < finalArray; i++)
 			atualizaFeromonioCaminho(&formigas[i]);
-			//pthread_mutex_unlock(&lock);
-		}
-		if (id == 0){
-			//printf("Final do Ciclo %d\n", contadorCiclos);
-			contadorCiclos++;
-			atualizaFeromonioGlobal();	
-		}
-		freeFormigas(formigas);    
-		//pthread_barrier_wait(&barreira); 
+
+		contadorCiclos++;
+		atualizaFeromonioGlobal();	
+
+		freeFormigas(inicioArray, finalArray, formigas);    
+		MPI_Barrier(MPI_COMM_WORLD);
 	}
-	//pthread_mutex_lock(&lock);
-	if (globalMelhorMovimentos > melhorLocal)
-		globalMelhorMovimentos = melhorLocal;
-	//pthread_mutex_unlock(&lock);
+
+	if (rank == MASTER) 
+		if (globalMelhorMovimentos > melhorLocal)
+			globalMelhorMovimentos = melhorLocal;
+
 	return NULL;
 }
 
@@ -307,7 +334,6 @@ void imprimeUsage(){
     printf("  -n <n_formigas>    numero de formigas\n");
     printf("  -f <arquivo>       caminho para o arquivo de entrada\n");
     printf("  -c <ciclos>        numero de ciclos\n");
-    printf("  -p <processos>     numero de processos\n\n");
     printf("  -s <seed>          seed para o random\n\n");
 }
 
@@ -336,14 +362,6 @@ int main(int argc, char **argv){
 	        case 'f':
 	            arquivo = optarg;
 	            break;
-	        case 'p':
-	            nProcessos = atoi(optarg);
-	            if (qtaFormigas % nProcessos != 0){
-	            	printf("%d\n", qtaFormigas/nProcessos);
-	            	printf("A quantidade de processos deve ser divisivel pelo numero de formigas\n");
-	            	exit(1);
-	            } 
-	            break;
 	        case 'h':
 	            imprimeUsage();
 	            exit(0);
@@ -353,8 +371,8 @@ int main(int argc, char **argv){
 	            abort();
 	    }
 	}
-    printf("\nAlfa = %.2f, Beta = %.2f, Rho = %.2f, Formigas = %d, Ciclos = %d, Arquivo = %s, Processos = %d\n",
-        alfa, beta, rho, qtaFormigas, maxCiclos, arquivo, nProcessos);
+    printf("\nAlfa = %.2f, Beta = %.2f, Rho = %.2f, Formigas = %d, Ciclos = %d, Arquivo = %s\n",
+        alfa, beta, rho, qtaFormigas, maxCiclos, arquivo);
 
 	inicializaHash(&nodesInseridosArvore, MAX_BUCKETS_ARVORE);
 	leEntrada(arquivo, matrizInicial);
@@ -366,23 +384,6 @@ int main(int argc, char **argv){
 
  	unsigned long long tempoExecucaoTotal = time(NULL);
 	
-	printf("Gerando Arvore...\n");
-	geraArvore();
-	printf("Arvore gerada, começando antsystem\n");
-
-	/* 
-		1 - Todas os processos geram a mesma arvore inicialmente
-		2 - Processos se comunicam dentro da funcao antsystem
-		3 - Serializar a formiga com menor movimentos de cada processo
-			3.1 - O caminho pode ser representado por 'e', 'd', c', 'b'
-		4 - Se comunicar com o proximo processo ate chegar no Master
-			4.1 - Receber a formiga, comparar qual menor movimento, passa a melhor para o proximo
-			4.2 - Master tem a melhor entre todos os processo e a dele
-			4.3 - Master broadcast a melhor formiga para todas as outras
-		5 - Atualiza a arvore local de cada processo com o feromonio da melhor formiga recebida
-		6 - Recomeça proximo ciclo
-	*/
-
 	int totalRanks;
 	int rank;
 
@@ -390,11 +391,20 @@ int main(int argc, char **argv){
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &totalRanks);
 
+	nProcessos = totalRanks;
+	if (qtaFormigas % nProcessos != 0){
+		printf("Numero de processos deve ser divisivel pela quantidade de formigas\n");
+		exit(1);
+	}
+
+	printf("Gerando Arvore...\n");
+	geraArvore();
+	printf("Arvore gerada, começando antsystem\n");
+	MPI_Barrier(MPI_COMM_WORLD);
+
  	unsigned long long tempoExecucaoAlgoritmo = time(NULL);
  
- 	/* Dividir formigas entre processos e executar algoritmo */
- 	antsystem();
-
+ 	antsystem(rank, totalRanks);
 
 	printf("\n\nResumo\n");
 	printf("Formigas: %d\n", qtaFormigas);
@@ -408,4 +418,7 @@ int main(int argc, char **argv){
 	printf("Tempo Ant System: %llus\n", (time(NULL) - tempoExecucaoAlgoritmo));	
 	printf("Tempo Total: %llus\n", (time(NULL) - tempoExecucaoTotal));
 	printf("Nodes na Arvore: %d\n", nodesInseridosArvore.qtaNodes);
+
+	printf("PROC %d - TERMINOU\n", rank);
+	MPI_Finalize();
 }

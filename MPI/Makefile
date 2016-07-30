@@ -1,4 +1,4 @@
-ALL:-
+ALL:
 	mpicc -o mpi *.c -Wall -ggdb -lm -O0
 clear:
 	rm mpi
