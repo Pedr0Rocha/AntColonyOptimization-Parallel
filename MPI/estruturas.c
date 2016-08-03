@@ -11,6 +11,20 @@ void cloneArray(int original[4][4], int clone[4][4]){
 			clone[i][j] = original[i][j];
 }
 
+void arrayToMPIArray(int *matrizAtualizar, int matriz[4][4]) {
+	int indexVetor = 0;
+	for (int j = 0; j < 4; j++)
+		for (int k = 0; k < 4; k++)
+			matrizAtualizar[indexVetor++] = matriz[j][k];
+}
+
+void MPIArrayToArray(int matrizAtualizar[16], int matrizNova[4][4]) {
+	int indexVetor = 0;
+	for (int j = 0; j < 4; j++)
+		for (int k = 0; k < 4; k++)
+			matrizNova[j][k] = matrizAtualizar[indexVetor++];				
+}
+
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]){
 	int i, j;
 	for (i = 0; i < 4; i++)

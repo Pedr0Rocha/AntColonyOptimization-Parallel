@@ -42,6 +42,8 @@ int calculaQuantidadeFilhos(node *node);
 int matrizIgual(int matrizAlvo[4][4], int matrizComparar[4][4]);
 void imprimeMatriz(int matriz[4][4]);
 void cloneArray(int matriz[4][4], int clone[4][4]);
+void arrayToMPIArray(int *matrizAtualizar, int matriz[4][4]);
+void MPIArrayToArray(int matrizAtualizar[16], int matrizNova[4][4]);
 listaLigada* insereListaLigada(node *node, listaLigada **lista);
 node* removeListaLigada(listaLigada **head, listaLigada **lista);
 int contaElementosQueue(listaLigada *lista);
