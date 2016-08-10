@@ -1,5 +1,5 @@
 ALL:
-	mpicc -o mpi *.c -Wall -ggdb -lm -O0
+	mpicc -o mpi *.c -lm -O3 -std=c99
 clear:
 	rm mpi
 run:

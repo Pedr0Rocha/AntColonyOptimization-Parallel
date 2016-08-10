@@ -263,43 +263,14 @@ void *antsystem(int rank, int totalRanks){
 		for (int i = 0; i < formigaPorProcesso; i++) {
 			inicializaFormigas(&formigas[i], i, &raizArvore);
 			geraSolucao(&formigas[i], &raizArvore);
-			//printf("PROC %d - Formiga %p - Movimentos %d - Ptr Caminho %p - Resolvido %d - Todos %p\n", 
-			//	rank, &formigas[i], formigas[i].movimentos, &formigas[i].caminho, formigas[i].resolvido, formigas[i].caminho.todos);
 		}
 		for (int i = 0; i < formigaPorProcesso; i++)
 			if (matrizIgual(formigas[i].caminho.todos->nodeAtual->matriz, matrizResposta))
 				if (formigas[i].movimentos < melhorLocal) {
 					melhorLocal = formigas[i].movimentos;
 					melhorFormiga = formigas[i];
-				}
-				
-		// if (melhorFormiga.resolvido) {
-		// 	listaLigada *lista = melhorFormiga.caminho.todos;
-		// 	printf("To visitante 1\n");
-		// 	while (lista != NULL) 
-		// 		lista = lista->prev;
-		// }			
+				}			
 		MPI_Barrier(MPI_COMM_WORLD);
-		/* 
-			Passo 1:
-			Se não for o MASTER 
-				envia o melhor local para master
-			Se for o MASTER
-				recebe todos os melhores locais e pega o rank do melhor
-			
-			Passo 2:
-			Se não for o MASTER
-				recebe 0 ou 1 para flag de enviar vetor com matrizes
-			Se for o MASTER
-				envia 1 para quem deve enviar vetor, 0 para quem deve apenas escutar
-
-			Passo 3:
-			Quem recebeu tem a flag enviar setada, preenche o vetor com as matrizes e envia
-			para todos os outros processos
-
-			Quem nao tem a flag setada, recebe vetor com matriz para atualizacao
-
-		*/
 
 		if (rank != MASTER) {
     		MPI_Send(&melhorLocal, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
@@ -311,13 +282,10 @@ void *antsystem(int rank, int totalRanks){
 			int tempMelhor;
     		for (int i = 1; i < nProcessos; i++) {
     			MPI_Recv(&tempMelhor, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    			//printf("Melhor recebido eh %d do processo %d\n", tempMelhor, i);
-    			//printf("Comparando %d < %d\n", tempMelhor, melhorLocal);
     			if (tempMelhor < melhorLocal) {
     				melhorLocal = tempMelhor;
     				rankDoMelhor = i;
     			}
-    			//printf("Rank do melhor %d\n", rankDoMelhor);
     		}
     		
     		/* Enviando para todos os processos melhorLocal */
@@ -328,11 +296,9 @@ void *antsystem(int rank, int totalRanks){
     		/* Enviando para todos os processos a flag de enviar vetor */
     		for (int i = 1; i < nProcessos; i++) {
     			if (i != rankDoMelhor) {
-    				//printf("Enviando %d (0) pra %d\n", enviarVetorMatrizes, i);
     				MPI_Send(&enviarVetorMatrizes, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
     			} else {
     				enviarVetorMatrizes = 1;
-    				//printf("Enviando %d (1) pra %d\n", enviarVetorMatrizes, i);
     				MPI_Send(&enviarVetorMatrizes, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
     				enviarVetorMatrizes = 0;
     			}
@@ -342,28 +308,16 @@ void *antsystem(int rank, int totalRanks){
     	/* Recebe flag de enviar vetor */
     	if (rank != MASTER) 
     		MPI_Recv(&enviarVetorMatrizes, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    	//printf("Processo %d recebeu a flag de vetor %d\n", rank, enviarVetorMatrizes);
 
     	if (melhorLocal != INT_MAX) {
-    		//printf("Processo %d entrou na etapa 3\n", rank);
 	    	int matrizesAtualizar[melhorLocal][16];
 
 	    	/* Cria vetor de matrizes com a melhor formiga e enviar para todos */
 	    	if (enviarVetorMatrizes) {
-	    		//printf("Melhor formiga esta no processo %d\n", rank);
-    			//listaLigada *lista = melhorFormiga.caminho.todos;
-    			//printf("Resolvida ou nenz? %d\n", melhorFormiga.resolvido);
-				//printf("To visitante 2\n");
-				//while (lista != NULL) 
-				//	lista = lista->prev;
 				listaLigada *caminho = melhorFormiga.caminho.todos;
-	    		//printf("Proc %d - Preenchendo Array\n", rank);
 	    		int indexVetor = 0;
 	    		while (caminho->prev != NULL) {
 	    			int indexAtualizar = 0;
-	     			//printf("Index Vetor: %d, Index Atualizar %d\n", indexVetor, indexAtualizar);
-	     			//printf("MElhor Local: %d\n", melhorLocal);
-	    			//memcpy(&matrizesAtualizar[indexVetor++], &(caminho->nodeAtual->matriz), sizeof(int) * 16);
 	    			for (int j = 0; j < 4; j++)
 					 	for (int k = 0; k < 4; k++)
 					 		matrizesAtualizar[indexVetor][indexAtualizar++] = caminho->nodeAtual->matriz[j][k];
@@ -379,12 +333,9 @@ void *antsystem(int rank, int totalRanks){
 	    	}
 
 	    	/* Atualiza feromonio com melhor formiga e uma parte da sua propria colonia */
-	    	//printf("Proc %d - Antes\n", rank);
 	    	for (int i = 0; i < formigaPorProcesso; i++) { 
-				//printf("Iteracao %d - Formiga -> %p\n", i, &formigas[i].caminho.todos);
 				atualizaFeromonioCaminho(&formigas[i]);
 			}
-			//printf("Proc %d - Dps\n", rank);
 			
 			if (rank != rankDoMelhor)
 				for (int i = 0; i < melhorLocal; i++) {
@@ -396,12 +347,10 @@ void *antsystem(int rank, int totalRanks){
 			for (int i = 0; i < formigaPorProcesso; i++)
 				atualizaFeromonioCaminho(&formigas[i]);
 		}
-		//printf("Processo %d saiu da etapa 3\n", rank);
 		contadorCiclos++;
 		atualizaFeromonioGlobal();	
 
 		freeFormigas(formigas, formigaPorProcesso);  
-		//printf("Processo %d esta esperando\n\n", rank);  
 		if (rank == MASTER) 
 			if (globalMelhorMovimentos > melhorLocal)
 				globalMelhorMovimentos = melhorLocal;
@@ -522,3 +471,24 @@ int main(int argc, char **argv){
 	printf("PROC %d - TERMINOU\n", rank);
 	MPI_Finalize();
 }
+
+	/* 
+		Passo 1:
+		Se não for o MASTER 
+			envia o melhor local para master
+		Se for o MASTER
+			recebe todos os melhores locais e pega o rank do melhor
+		
+		Passo 2:
+		Se não for o MASTER
+			recebe 0 ou 1 para flag de enviar vetor com matrizes
+		Se for o MASTER
+			envia 1 para quem deve enviar vetor, 0 para quem deve apenas escutar
+
+		Passo 3:
+		Quem recebeu tem a flag enviar setada, preenche o vetor com as matrizes e envia
+		para todos os outros processos
+
+		Quem nao tem a flag setada, recebe vetor com matriz para atualizacao
+
+	*/

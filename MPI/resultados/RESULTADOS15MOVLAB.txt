@@ -1,0 +1,132 @@
+=================== TESTE SEQUENCIAL 
+Formigas: 1200
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 80s
+Tempo Total: 84s
+Nodes na Arvore: 238773
+
+Formigas: 1200
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 3s
+Tempo Ant System: 80s
+Tempo Total: 83s
+Nodes na Arvore: 238773
+
+Formigas: 1200
+Ciclos: 1000
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 80s
+Tempo Total: 84s
+Nodes na Arvore: 238773
+
+
+=================== TESTE 2 PROCESSOS 
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 600
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 49s
+Tempo Total: 53s
+Nodes na Arvore: 238773
+SP: 1.632
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 600
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 49s
+Tempo Total: 53s
+Nodes na Arvore: 238773
+SP: 1.632
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 600
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 4s
+Tempo Ant System: 50s
+Tempo Total: 54s
+Nodes na Arvore: 238773
+SP: 1.6
+
+=================== TESTE 4 PROCESSOS
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 300
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 6s
+Tempo Ant System: 36s
+Tempo Total: 42s
+Nodes na Arvore: 238773
+SP: 2.222
+
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 300
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 6s
+Tempo Ant System: 37s
+Tempo Total: 43s
+Nodes na Arvore: 238773
+SP: 2.162
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 300
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 6s
+Tempo Ant System: 36s
+Tempo Total: 42s
+Nodes na Arvore: 238773
+SP: 2.222
+
+=================== TESTE 8 PROCESSOS - 4 i7, 4 i7
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 150
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 7s
+Tempo Ant System: 29s
+Tempo Total: 36s
+Nodes na Arvore: 238773
+SP: 2.758
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 150
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 6s
+Tempo Ant System: 30s
+Tempo Total: 36s
+Nodes na Arvore: 238773
+SP: 2.666
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 150
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 6s
+Tempo Ant System: 28s
+Tempo Total: 34s
+Nodes na Arvore: 238773
+SP: 2.857
+
+=================== TESTE 16 PROCESSOS - 8 i7, 8 i7
+
+Formigas: 1200
+Ciclos: 1000
+Formigas por Processo: 150
+Solucao Encontrada: 15
+Tempo Gerando Arvore: 6s
+Tempo Ant System: 28s
+Tempo Total: 34s
+Nodes na Arvore: 238773
+SP: 2.867
